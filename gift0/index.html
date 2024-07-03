@@ -32,7 +32,7 @@
 <br>
 <h4>Add QUOTE_TO_CHATBOT_API_KEY</h4>
 <input id="QUOTE_TO_CHATBOT_API_KEY" type="text" value="" placeholder="QUOTE_TO_CHATBOT_API_KEY" rows="5" cols="100" style="display:block; text-align: left; height: 50px; width:600px;">
-<button id="add_QUOTE_TO_CHATBOT_API_KEY" style="display:none; onclick="add_QUOTE_TO_CHATBOT_API_KEY()">Add QUOTE_TO_CHATBOT_API_KEY</button>
+<button id="add_QUOTE_TO_CHATBOT_API_KEY" style="display:block; onclick="add_QUOTE_TO_CHATBOT_API_KEY()">Add QUOTE_TO_CHATBOT_API_KEY</button>
 <br>
 <h4>Add data to chatbot model</h4>
 <input id="data_text" type="text" value="" placeholder="Add text to your chatbot" rows="10" cols="100" style="display:block; text-align: left; height: 50px; width:600px;">
@@ -265,7 +265,7 @@ async function Gemini_textgeneration_w_quotes() {
 			var options = {method : 'POST', headers: headers, body : JSON.stringify(data)};
 			await fetch(url, options)
 				.then(res => res.json())
-				.then(res => {
+				.then(async function(res) {
 					console.log("result: ", res);
 					document.getElementById('response').innerHTML += res; 
 					await print_response_to_frontend();
