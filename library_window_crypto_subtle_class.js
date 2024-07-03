@@ -156,16 +156,12 @@ export class encrypted_CRUD_file_database {
 	
 		// Step 2: Add data to the encrypted_file
 		console.log('****** Step 2: Add data to the encrypted_file ******');
-		
-		// Obtain username
-		obj.data = obj.input_text.split('|').shift();
-		// console.log("obj.username:", obj.username);
 	
-		// Add username to file_database.txt
-		obj.decrypted_file_database = obj.decrypted_file_database + "\n" + obj.data;
+		// Add data to encrypted_file
+		obj.decrypted_file_database = obj.decrypted_file_database + "\n" + obj.input_text;
 		obj = await this.insert_data(obj);
 			
-		// Save updated database to file_database.txt
+		// Save updated the encrypted_file
 		// obj.env_text
 		// obj.env_file_download_url
 		// obj.env_sha
