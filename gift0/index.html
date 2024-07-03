@@ -127,11 +127,13 @@ async function add_QUOTE_TO_CHATBOT_API_KEY() {
 	RepoAobj.input_text = document.getElementById("QUOTE_TO_CHATBOT_API_KEY").value+"|"+RepoAobj.repoA_name;
 	RepoAobj.append_text = "do_not_append"; // "append_unique", "append_non_unique", "do_not_append"
 	RepoAobj.type_of_encryption = "hexadecimal"; // "window_crypto_subtle", "hexadecimal"
+
+	console.log("RepoAobj: ", RepoAobj);
 	
 	const classObj = new encrypted_CRUD_file_database(RepoAobj);
 	const obj = await classObj.add_data_to_file();
 
-	document.getElementById("notification").innerHTML = "Your entered username: "+document.getElementById("QUOTE_TO_CHATBOT_API_KEY").value+", is "+obj.query_search_result+" in the file database. "+obj.query_insert_result;
+	document.getElementById("notification").innerHTML = obj.query_insert_result;
 }
 
 // -----------------------------------------------
