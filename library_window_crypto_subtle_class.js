@@ -108,7 +108,8 @@ export class encrypted_CRUD_file_database {
 		// [Query 1] Add a new username to the file_database
 		if (obj.query_search_result == 'Not Present') {
 			// Add username to file_database.txt
-			obj = await this.insert_username(obj);
+			obj.decrypted_file_database = obj.decrypted_file_database + "\n" + obj.username;
+			obj = await this.insert_data(obj);
 				
 			// Save updated database to file_database.txt
 			// obj.env_text
@@ -131,6 +132,58 @@ export class encrypted_CRUD_file_database {
 		} else {
 			obj.query_insert_result = "Username is Present, select another username.";
 		}
+		delete obj.decrypted_file_database;
+		return obj;
+	}
+
+	// ------------------------------------------------
+
+	async add_data_to_file_database() {
+	
+		var obj = await this.initialize();
+
+		// ------------------------------------------------
+		
+		// Step 0: convert the JSON Web key (Key_jwk_obj) to an object (Key_obj)
+		obj = await this.GET_public_private_keys(obj);
+		
+		// ------------------------------------------------
+	
+		// Step 1: decrypt the file_database
+		obj = await this.decrypt_file_database(obj);
+		
+	       	// --------------------------------
+	
+		// Step 2: Add data to the encrypted_file
+		console.log('****** Step 2: Add data to the encrypted_file ******');
+		
+		// Obtain username
+		obj.data = obj.input_text.split('|').shift();
+		// console.log("obj.username:", obj.username);
+	
+		// Add username to file_database.txt
+		obj.decrypted_file_database = obj.decrypted_file_database + "\n" + obj.data;
+		obj = await this.insert_data(obj);
+			
+		// Save updated database to file_database.txt
+		// obj.env_text
+		// obj.env_file_download_url
+		// obj.env_sha
+		obj.env_desired_path = obj.env_file_download_url.split('main/').pop();
+		// console.log('obj.env_desired_path: ', obj.env_desired_path);
+		obj.auth = obj.env_text; // Initialize value
+
+		obj.file_download_url = obj.filedatabase_file_download_url;
+		obj.put_message = 'resave database';
+		obj.input_text = btoa(obj.encrypted_file_database);
+		obj.desired_path =  obj.filedatabase_file_download_url.split('main/').pop();
+		obj.sha = obj.filedatabase_sha;
+			
+		obj = await this.find_a_key_match(obj);
+		delete obj.Key_obj;
+			
+		obj.query_insert_result = "Data added.";
+		
 		delete obj.decrypted_file_database;
 		return obj;
 	}
@@ -507,9 +560,8 @@ export class encrypted_CRUD_file_database {
 	
 	// ------------------------------------------------
 	
-	async insert_username(obj) {
+	async insert_data(obj) {
 		
-		obj.decrypted_file_database = obj.decrypted_file_database + "\n" + obj.username;
 		obj.decrypted_file_database_arr = obj.decrypted_file_database.split('\n');
 	
 		obj = await this.decrypted_file_database_arr_to_str(obj);
