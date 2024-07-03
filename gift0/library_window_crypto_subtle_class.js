@@ -11,29 +11,41 @@ export class encrypted_CRUD_file_database {
 
 	// ------------------------------------------------
 
-	async initialize() {
+	async initialize_github() {
 		var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", ".github", this.RepoAobj.repoB_name, this.RepoAobj.repoOwner);
-		var obj_public = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".public_window_crypto_subtle", ".github", this.RepoAobj.repoB_name, this.RepoAobj.repoOwner);
-		var obj_private = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".private_window_crypto_subtle", ".github", this.RepoAobj.repoB_name, this.RepoAobj.repoOwner);
 		
 		var obj = {env_text: obj_env.text.replace(/[\n\s]/g, ""), 
 			   env_file_download_url: obj_env.file_download_url, 
 			   env_sha: obj_env.sha, 
-			   public_text: obj_public.text.replace(/[\n\s]/g, ""), 
-			   public_file_download_url: obj_public.file_download_url, 
-			   public_sha: obj_public.sha,
-			   private_text: obj_private.text.replace(/[\n\s]/g, ""), 
-			   private_file_download_url: obj_private.file_download_url, 
-			   private_sha: obj_private.sha,
 			   n: 1,
 			   repoOwner: this.RepoAobj.repoOwner,
 			   filename: this.RepoAobj.filename, 
 			   foldername: this.RepoAobj.foldername, 
 			   input_text: this.RepoAobj.input_text, 
 			   repoB_name: this.RepoAobj.repoB_name,
+			   type_of_encryption: this.RepoAobj.type_of_encryption,
+			   append_text: this.RepoAobj.append_text,
 		};
 	
 		Object.freeze(obj.env_text); // make the original value non-changeable
+
+		return obj;
+	}
+
+	// ------------------------------------------------
+
+	async initialize_window_crypto_subtle(obj) {
+		
+		var obj_public = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".public_window_crypto_subtle", ".github", this.RepoAobj.repoB_name, this.RepoAobj.repoOwner);
+		var obj_private = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".private_window_crypto_subtle", ".github", this.RepoAobj.repoB_name, this.RepoAobj.repoOwner);
+		
+		obj.public_text = obj_public.text.replace(/[\n\s]/g, "");
+		obj.public_file_download_url = obj_public.file_download_url;
+		obj.public_sha = obj_public.sha;
+		obj.private_text = obj_private.text.replace(/[\n\s]/g, "");
+		obj.private_file_download_url = obj_private.file_download_url;
+		obj.private_sha = obj_private.sha;
+			
 		Object.freeze(obj.public_text); // make the original value non-changeable
 		Object.freeze(obj.private_text); // make the original value non-changeable
 
@@ -41,20 +53,23 @@ export class encrypted_CRUD_file_database {
 	}
 
 	// ------------------------------------------------
-	
+
 	async search_username_to_file_database() {
 		
-		var obj = await this.initialize();
-
-		// ------------------------------------------------
+		var obj = await this.initialize_github();
 		
-		// Step 0: convert the JSON Web key (Key_jwk_obj) to an object (Key_obj)
-		obj = await this.GET_public_private_keys(obj);
+		// ------------------------------------------------
+
+		if (obj.type_of_encryption == "window_crypto_subtle") {
+			// Step 0: convert the JSON Web key (Key_jwk_obj) to an object (Key_obj)
+			obj = await this.initialize_window_crypto_subtle(obj);
+			obj = await this.GET_public_private_keys(obj);
+		}
 		
 		// ------------------------------------------------
 	
-		// Step 1: decrypt the file_database
-		obj = await this.decrypt_file_database(obj);
+		// Step 1: decrypt the file
+		obj = await this.decrypt_file(obj);
 		
 	       	// --------------------------------
 	
@@ -73,64 +88,80 @@ export class encrypted_CRUD_file_database {
 
 	// ------------------------------------------------
 
-	async add_username_to_file_database() {
+	async add_data_to_file() {
 	
-		var obj = await this.initialize();
+		var obj = await this.initialize_github();
+		
+		// ------------------------------------------------
+
+		if (obj.type_of_encryption == "window_crypto_subtle") {
+			// Step 0: convert the JSON Web key (Key_jwk_obj) to an object (Key_obj)
+			obj = await this.initialize_window_crypto_subtle(obj);
+			obj = await this.GET_public_private_keys(obj);
+		}
+		
+		// ------------------------------------------------
+	
+		// Obtain input_text
+		obj.input_text_only = obj.input_text.split('|').shift();
+		// console.log("obj.input_text_only:", obj.input_text_only);
 
 		// ------------------------------------------------
+
+		// Ways to add data to a file: 0. append unique data to exsiting data ("append_unique"), 1. append non-unique data to existing data ("append_non_unique"), 2. do not append data ("do_not_append")
+		if (obj.append_text == "append_unique") {
+			// --------------------------------
+			// Purpose: for username storage
+			// --------------------------------
+
+			// Step 1: decrypt the file_database
+			obj = await this.decrypt_file(obj);
+			
+		       	// --------------------------------
+			
+			// Step 2: Perform query 0 - Determine if the username is the file_database
+			console.log('****** Step 2: Perform query 0 - Determine if the input_text is the file_database ******');
+			
+			// [Query 0] Determine if username is in the database
+			obj.query_search_result = await this.comparator_search_for_a_username(obj.decrypted_file_database, obj.input_text_only);
+			// console.log("obj.query_search_", obj.query_search_result);
 		
-		// Step 0: convert the JSON Web key (Key_jwk_obj) to an object (Key_obj)
-		obj = await this.GET_public_private_keys(obj);
+			// --------------------------------
 		
-		// ------------------------------------------------
-	
-		// Step 1: decrypt the file_database
-		obj = await this.decrypt_file_database(obj);
+			// Step 3: Perform query 1 - Add the username to the file_database
+			console.log('****** Step 3: Perform query 1 - Add the unique input_text to the file_database ******');
 		
-	       	// --------------------------------
-	
-		// Step 2: Perform query 0 - Determine if the username is the file_database
-		console.log('****** Step 2: Perform query 0 - Determine if the username is the file_database ******');
-		
-		// Obtain username
-		obj.username = obj.input_text.split('|').shift();
-		// console.log("obj.username:", obj.username);
-	
-		// [Query 0] Determine if username is in the database
-		obj.query_search_result = await this.comparator_search_for_a_username(obj.decrypted_file_database, obj.username);
-		// console.log("obj.query_search_", obj.query_search_result);
-	
-		// --------------------------------
-	
-		// Step 3: Perform query 1 - Add the username to the file_database
-		console.log('****** Step 3: Perform query 1 - Add the username to the file_database ******');
-	
-		// [Query 1] Add a new username to the file_database
-		if (obj.query_search_result == 'Not Present') {
-			// Add username to file_database.txt
-			obj.decrypted_file_database = obj.decrypted_file_database + "\n" + obj.username;
+			// [Query 1] Add a new username to the file_database
+			if (obj.query_search_result == 'Not Present') {
+				// Add username to file_database.txt
+				obj.decrypted_file_database = obj.decrypted_file_database + "\n" + obj.input_text_only;
+				obj = await this.insert_data(obj);
+				obj.query_insert_result = "Unique data added.";
+			} else {
+				obj.query_insert_result = "Data is Present, try again to input unique text data.";
+			}
+			
+		} else if (obj.append_text == "append_non_unique") {
+			// --------------------------------
+			// Purpose: for text data to train models
+			// --------------------------------
+			
+			// Step 1: decrypt the file_database
+			obj = await this.decrypt_file(obj);
+			
+		       	// --------------------------------
+			
+			obj.decrypted_file_database = obj.decrypted_file_database + "\n" + obj.input_text_only;
 			obj = await this.insert_data(obj);
-				
-			// Save updated database to file_database.txt
-			// obj.env_text
-			// obj.env_file_download_url
-			// obj.env_sha
-			obj.env_desired_path = obj.env_file_download_url.split('main/').pop();
-			// console.log('obj.env_desired_path: ', obj.env_desired_path);
-			obj.auth = obj.env_text; // Initialize value
-	
-			obj.file_download_url = obj.filedatabase_file_download_url;
-			obj.put_message = 'resave database';
-			obj.input_text = btoa(obj.encrypted_file_database);
-			obj.desired_path =  obj.filedatabase_file_download_url.split('main/').pop();
-			obj.sha = obj.filedatabase_sha;
-				
-			obj = await this.find_a_key_match(obj);
-			delete obj.Key_obj;
-				
-			obj.query_insert_result = "Username added.";
-		} else {
-			obj.query_insert_result = "Username is Present, select another username.";
+			obj.query_insert_result = "Non-unique data added.";
+
+		} else if (obj.append_text == "do_not_append") {
+			// --------------------------------
+			// Purpose: for Frontend key updating
+			// --------------------------------
+			obj.decrypted_file_database = obj.input_text_only;
+			obj = await this.insert_data(obj);
+			obj.query_insert_result = "New data added.";
 		}
 		delete obj.decrypted_file_database;
 		return obj;
@@ -138,98 +169,29 @@ export class encrypted_CRUD_file_database {
 
 	// ------------------------------------------------
 
-	async add_data_to_file_database() {
-	
-		var obj = await this.initialize();
+	async get_decrypted_file_data() {
+		// view, return, get data
+		
+		var obj = await this.initialize_github();
+		
+		// ------------------------------------------------
 
-		// ------------------------------------------------
-		
-		// Step 0: convert the JSON Web key (Key_jwk_obj) to an object (Key_obj)
-		obj = await this.GET_public_private_keys(obj);
-		
-		// ------------------------------------------------
-	
-		// Step 1: decrypt the file_database
-		obj = await this.decrypt_file_database(obj);
-		
-	       	// --------------------------------
-	
-		// Step 2: Add data to the encrypted_file
-		console.log('****** Step 2: Add data to the encrypted_file ******');
-	
-		// Add data to encrypted_file
-		obj.decrypted_file_database = obj.decrypted_file_database + "\n" + obj.input_text;
-		obj = await this.insert_data(obj);
-			
-		// Save updated the encrypted_file
-		// obj.env_text
-		// obj.env_file_download_url
-		// obj.env_sha
-		obj.env_desired_path = obj.env_file_download_url.split('main/').pop();
-		// console.log('obj.env_desired_path: ', obj.env_desired_path);
-		obj.auth = obj.env_text; // Initialize value
-
-		obj.file_download_url = obj.filedatabase_file_download_url;
-		obj.put_message = 'resave database';
-		obj.input_text = btoa(obj.encrypted_file_database);
-		obj.desired_path =  obj.filedatabase_file_download_url.split('main/').pop();
-		obj.sha = obj.filedatabase_sha;
-			
-		obj = await this.find_a_key_match(obj);
-		delete obj.Key_obj;
-			
-		obj.query_insert_result = "Data added.";
-		
-		delete obj.decrypted_file_database;
-		return obj;
-	}
-		
-	// ------------------------------------------------
-	
-	async view_file_database() {
-
-		var obj = await this.initialize();
-
-		// ------------------------------------------------
-		
-		// Step 0: convert the JSON Web key (Key_jwk_obj) to an object (Key_obj)
-		obj = await this.GET_public_private_keys(obj);
-		
-		// ------------------------------------------------
-	
-		// Step 1: decrypt the file_database
-		obj = await this.decrypt_file_database(obj);
+		if (obj.type_of_encryption == "window_crypto_subtle") {
+			// Step 0: convert the JSON Web key (Key_jwk_obj) to an object (Key_obj)
+			obj = await this.initialize_window_crypto_subtle(obj);
+			obj = await this.GET_public_private_keys(obj);
+		}
 	
 		// ------------------------------------------------
 	
-		// Step 2: View the contents of the file_database
-		console.log('****** Step 2: View the contents of the file_database ******');
-		console.log(obj.decrypted_file_database);
-		delete obj.decrypted_file_database;
-		obj.query_view_result = "Finished.";
-		return obj;
-	}
-
-	// ------------------------------------------------
+		// Step 1: decrypt the file
+		obj = await this.decrypt_file(obj);
 	
-	async return_file_database() {
-
-		var obj = await this.initialize();
-
 		// ------------------------------------------------
+	
+		// Step 2: Return the decrypted contents of the file
+		console.log('****** Step 2: Return the decrypted contents of the file ******');
 		
-		// Step 0: convert the JSON Web key (Key_jwk_obj) to an object (Key_obj)
-		obj = await this.GET_public_private_keys(obj);
-		
-		// ------------------------------------------------
-	
-		// Step 1: decrypt the file_database
-		obj = await this.decrypt_file_database(obj);
-	
-		// ------------------------------------------------
-	
-		// Step 2: View the contents of the file_database
-		console.log('****** Step 2: Return the contents of the file_database ******');
 		obj.query_view_result = "Finished: obj.decrypted_file_database outputted";
 		return obj;
 	}
@@ -238,17 +200,20 @@ export class encrypted_CRUD_file_database {
 
 	async delete_username_from_file_database() {
 	
-		var obj = await this.initialize();
-
-		// ------------------------------------------------
+		var obj = await this.initialize_github();
 		
-		// Step 0: convert the JSON Web key (Key_jwk_obj) to an object (Key_obj)
-		obj = await this.GET_public_private_keys(obj);
+		// ------------------------------------------------
+
+		if (obj.type_of_encryption == "window_crypto_subtle") {
+			// Step 0: convert the JSON Web key (Key_jwk_obj) to an object (Key_obj)
+			obj = await this.initialize_window_crypto_subtle(obj);
+			obj = await this.GET_public_private_keys(obj);
+		}
 		
 		// ------------------------------------------------
 	
 		// Step 1: decrypt the file_database
-		obj = await this.decrypt_file_database(obj);
+		obj = await this.decrypt_file(obj);
 		
 	       	// --------------------------------
 	
@@ -297,7 +262,39 @@ export class encrypted_CRUD_file_database {
 		return obj;
 	}
 
+	// ------------------------------------------------
+	
+	async insert_data(obj) {
 
+		obj.decrypted_file_database_arr = obj.decrypted_file_database.split('\n');
+		obj = await this.decrypted_file_database_arr_to_str(obj);
+
+		if (obj.type_of_encryption == "window_crypto_subtle") {
+			await this.encrypt_text_window_crypto_subtle(obj);
+		} else if (obj.type_of_encryption == "hexadecimal") {
+			await this.encrypt_text_hexadecimal(obj);
+		}
+			
+		// Save updated file
+		// obj.env_text
+		// obj.env_file_download_url
+		// obj.env_sha
+		obj.env_desired_path = obj.env_file_download_url.split('main/').pop();
+		// console.log('obj.env_desired_path: ', obj.env_desired_path);
+		obj.auth = obj.env_text; // Initialize value
+
+		obj.file_download_url = obj.filedatabase_file_download_url;
+		obj.put_message = 'resave file';
+		obj.input_text = btoa(obj.encrypted_file_database);
+		obj.desired_path =  obj.filedatabase_file_download_url.split('main/').pop();
+		obj.sha = obj.filedatabase_sha;
+			
+		obj = await this.find_a_key_match(obj);
+		delete obj.Key_obj;
+		
+		return obj;
+	}
+	
 	// ------------------------------------------------
 
 	async GET_public_private_keys(obj) {
@@ -326,7 +323,7 @@ export class encrypted_CRUD_file_database {
 
 	// ------------------------------------------------
 
-	async decrypt_file_database(obj) {
+	async decrypt_file(obj) {
 
 		console.log('****** Step 1: decrypt the file_database ******');
 		var obj_filedatabase = await GET_text_from_file_wo_auth_GitHub_RESTAPI(obj.filename, obj.foldername, obj.repoB_name, obj.repoOwner)
@@ -338,7 +335,12 @@ export class encrypted_CRUD_file_database {
 	
 		obj.decrypted_file_database = "";
 		if (obj.encrypted_file_database.length > 1) {
-			obj = await this.decrypt_text_RSA(obj);
+
+			if (obj.type_of_encryption == "window_crypto_subtle") {
+				obj = await this.decrypt_text_window_crypto_subtle(obj);
+			} else {
+				obj = await this.decrypt_text_hexadecimal(obj);
+			}
 		}
 	
 		return obj;
@@ -433,7 +435,7 @@ export class encrypted_CRUD_file_database {
 	
 	// ------------------------------------------------
 	
-	async encrypt_text_RSA(obj) {
+	async encrypt_text_window_crypto_subtle(obj) {
 	
 		// console.log('Database before encrypting: ', obj.decrypted_file_database);
 	
@@ -446,7 +448,7 @@ export class encrypted_CRUD_file_database {
 		const arrayBuffer = uint8Array.buffer;
 		// console.log("arrayBuffer:", arrayBuffer);
 	                
-		// Encode with respect to RSA publicKey : transform arrayBuffer [fixed-length array] via the algorithm
+		// Encode with respect to publicKey encryption method : transform arrayBuffer [fixed-length array] via the algorithm
 		let data_encoded_arrayBuffer = await window.crypto.subtle.encrypt({name: "RSA-OAEP"}, obj.publicKey_obj, arrayBuffer);
 		// console.log('data_encoded_arrayBuffer:', data_encoded_arrayBuffer);
 	
@@ -467,7 +469,7 @@ export class encrypted_CRUD_file_database {
 		
 	// ------------------------------------------------
 		
-	async decrypt_text_RSA(obj) {
+	async decrypt_text_window_crypto_subtle(obj) {
 		
 		// Convert hexadecimal string to a UTF-8 array [non-fixed length array] where the length is 256
 		const uint8Array = await this.convert_hexstr_to_uint8Array(obj.encrypted_file_database);
@@ -477,7 +479,7 @@ export class encrypted_CRUD_file_database {
 		const arrayBuffer = uint8Array.buffer;
 		// console.log('arrayBuffer:', arrayBuffer);
 		
-		// Decode with respect to RSA privateKey : transform arrayBuffer [fixed-length array] via the algorithm
+		// Decode with respect to privateKey encryption method : transform arrayBuffer [fixed-length array] via the algorithm
 		let data_decoded_arrayBuffer = await window.crypto.subtle.decrypt({name: "RSA-OAEP"}, obj.privateKey_obj, arrayBuffer);
 		// console.log("data_decoded_arrayBuffer:", data_decoded_arrayBuffer);
 	
@@ -485,6 +487,56 @@ export class encrypted_CRUD_file_database {
 		
 		// Convert arrayBuffer [fixed-length array] to UTF-8 array [non-fixed length array]
 		const uint8Array_out = new Uint8Array(data_decoded_arrayBuffer);
+		// console.log('uint8Array_out:', uint8Array_out);
+	
+		// Convert UTF-8 array [non-fixed length array] to text
+		obj.decrypted_file_database = new TextDecoder().decode(uint8Array_out);
+	
+		return obj;
+	}
+	
+	// ------------------------------------------------
+
+	async encrypt_text_hexadecimal(obj) {
+	
+		// console.log('Database before encrypting: ', obj.decrypted_file_database);
+	
+		// Convert string to UTF-8 array [non-fixed length array]
+		// So that the text can be stored as a common character/number (that many different systems can understand/decode)
+		const uint8Array = new TextEncoder().encode(obj.decrypted_file_database);
+		// console.log('uint8Array:', uint8Array);
+	
+		// Convert UTF-8 array [non-fixed length array] to a binary arrayBuffer [fixed-length array]
+		const arrayBuffer = uint8Array.buffer;
+		// console.log("arrayBuffer:", arrayBuffer);
+		
+		// Convert arrayBuffer [fixed-length array] to UTF-8 array [non-fixed length array]
+		const uint8Array_out = new Uint8Array(arrayBuffer);
+		// console.log('uint8Array_out:', uint8Array_out);
+		
+		// Convert UTF-8 array [non-fixed length array] to hexadecimal string
+		obj.encrypted_file_database = await this.convert_uint8Array_to_hexstr(uint8Array_out);
+		// console.log('obj.encrypted_file_database:', obj.encrypted_file_database);
+		
+		return obj;
+	}
+	
+	
+		
+	// ------------------------------------------------
+		
+	async decrypt_text_hexadecimal(obj) {
+		
+		// Convert hexadecimal string to a UTF-8 array [non-fixed length array] where the length is 256
+		const uint8Array = await this.convert_hexstr_to_uint8Array(obj.encrypted_file_database);
+		// console.log('uint8Array:', uint8Array);
+		
+		// Convert UTF-8 array [non-fixed length array] to a binary arrayBuffer [fixed-length array]
+		const arrayBuffer = uint8Array.buffer;
+		// console.log('arrayBuffer:', arrayBuffer);
+		
+		// Convert arrayBuffer [fixed-length array] to UTF-8 array [non-fixed length array]
+		const uint8Array_out = new Uint8Array(arrayBuffer);
 		// console.log('uint8Array_out:', uint8Array_out);
 	
 		// Convert UTF-8 array [non-fixed length array] to text
@@ -556,17 +608,6 @@ export class encrypted_CRUD_file_database {
 	
 	// ------------------------------------------------
 	
-	async insert_data(obj) {
-		
-		obj.decrypted_file_database_arr = obj.decrypted_file_database.split('\n');
-	
-		obj = await this.decrypted_file_database_arr_to_str(obj);
-		
-		return await this.encrypt_text_RSA(obj);
-	}
-	
-	// ------------------------------------------------
-	
 	async remove_username(obj) {
 		
 		obj.decrypted_file_database_arr = obj.decrypted_file_database.split('\n');
@@ -586,7 +627,7 @@ export class encrypted_CRUD_file_database {
 		
 		obj = await this.decrypted_file_database_arr_to_str(obj);
 		
-		return await this.encrypt_text_RSA(obj);
+		return await this.encrypt_text_window_crypto_subtle(obj);
 	}
 	
 	// ------------------------------------------------
