@@ -1,1 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
 
+<!-- ---------------------------------------- -->
+<!-- View two split window -->
+<div align="left">
+<table style='text-align: left; width: 500px; display:block'>
+<tr>
+
+<!-- ---------------------------------------- -->
+<th id="outputs">
+<h3 id="table_h3" style="display:block">[Step 0] Input a statement or question to gift recipient</h3>
+<!-- View output in table -->
+<input id="input_text" type="text" value="" placeholder="" rows="10" cols="100" style="display:block; text-align: left; height: 50px; width:600px;"><button id="run_selection" onclick="run_selection()">Run Selection</button>
+<table id="chatbot_output" style='text-align: left; width: 300px; display:none'>
+<!-- dynamically add rows here -->
+</table>
+</th>
+<!-- ---------------------------------------- -->
+
+<!-- ---------------------------------------- -->
+<th id="inputs">
+<h3>[Step 1] View processing feedback</h3>
+<div id="notification"></div>
+<div id="error"></div>
+<div id="response"></div>
+<div id="output_file_path"></div>
+<br>
+<h3>[Step 2] Add data to your chatbot model</h3>
+<input id="QUOTE_TO_CHATBOT_API_KEY" type="text" value="" placeholder="QUOTE_TO_CHATBOT_API_KEY" rows="10" cols="100" style="display:block; text-align: left; height: 50px; width:600px;">
+<br>
+<input id="add_data_text" type="text" value="" placeholder="" rows="10" cols="100" style="display:block; text-align: left; height: 50px; width:600px;">
+<br>
+<button id="add_data_to_chatbot_model" style="display:block; onclick="add_data_to_chatbot_model()">Add data to chatbot model</button>&nbsp;&nbsp;&nbsp;<button id="add_username" style="display:none; onclick="add_username()">Add QUOTE_TO_CHATBOT_API_KEY</button>
+</th>
+<!-- ---------------------------------------- -->
+
+</tr>
+</table>
+</div>  
+<!-- ---------------------------------------- -->
+
+<!-- ---------------------------------------- -->
+<!-- CSS -->
+<style>
+div { padding: 10px; display:block; font-family:courier; font-size:15px; height:10px; }
+	
+div#notification { position: relative; color: #3236a8; }
+div#error { position: relative; color: #bd1f17; }
+
+div#response { display:none; color: #3236a8; }
+div#output_file_path { display:none; }
+
+table {vertical-align: top; border-collapse: collapse; position: relative; z-index: 0; border: 0px solid black;}
+
+tr {vertical-align: top; border: 0px solid black; padding: 20px 10px; }
+
+th, td {vertical-align: top; border: 0px solid black; padding: 20px 10px; }
+
+input#input_text {background-color: #acbdac; border: 0.5px grey; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;}
+</style>
+
+<!-- --------------------------------------------------- -->
+
+<script type="module" src="./quote_to_chatbot_gifts/index.js"></script>
+
+<!-- --------------------------------------------------- -->
+
+
+<script>
+
+// -----------------------------------------------
+	
+window.addEventListener('beforeunload', function() {
+    window.location.href = window.location.href + '?nocache=' + new Date().getTime();
+});
+
+// -----------------------------------------------
+
+var RepoAobj = {};
+  
+RepoAobj.repoOwner = "CodeSolutions2";
+RepoAobj.repoA_name = "quote_to_chatbot_gifts/gift0";
+RepoAobj.repoB_name = "frontend_backend_message_passing_central_repository_v1";
+RepoAobj.foldername = "quote_to_chatbot_gifts/gift0";
+  
+  
+// -----------------------------------------------
+
+async function run_selection() {
+	await frontend_processing();
+}
+
+// -----------------------------------------------
+
+async function GET_repo_file_info_RESTAPI_fast(RepoAobj) {
+	
+	return await fetch(`https://raw.githubusercontent.com/${RepoAobj.repoOwner}/${RepoAobj.repoB_name}/main/${RepoAobj.foldername}/${RepoAobj.filename}`)
+		.then(res => res.text())
+		.then(async function (text_out) { return text_out; })
+		.catch(error => { console.log(error); });
+}
+  
+  
+async function add_data_to_chatbot_model() {
+
+  // 0. determine if there is a username for the gift user
+  const classObj = new encrypted_CRUD_file_database(RepoAobj);
+  RepoAobj.filename = "gift.env";
+
+  const text_out = await GET_repo_file_info_RESTAPI_fast(RepoAobj);
+
+  // There is no username file, so ask the username to create a gift.env file
+  if (text_out != '404: Not Found') {
+    // Ask the user to create a username
+    document.getElementById("notification").innerHTML = "No username for your account exist. Enter your desired desired QUOTE_TO_CHATBOT_API_KEY to create a username, and click the add_username button.";
+
+    document.getElementById("add_username").style.display = "block";  
+  } else {
+    RepoAobj.input_text = document.getElementById("QUOTE_TO_CHATBOT_API_KEY").value+"|"+RepoAobj.repoA_name;
+    const obj = await classObj.search_username_to_file_database();
+  
+    if (obj.query_search_result == "Present") {
+      document.getElementById("notification").innerHTML = "Your username was confirmed, your data will be added to your file.";
+      await add_data();
+    } else {
+      document.getElementById("notification").innerHTML = "Your username was not correct, please try again.";
+      // **** Need to add contact or reset password information ****
+    }
+  }
+  
+	
+  
+
+  
+  document.getElementById("").value
+  
+  
+
+  // 1. if there is a gift user, add the user data to the encrypted file
+	await frontend_processing();
+}
+
+// -----------------------------------------------
+
+
+
+
+  
+// -----------------------------------------------
+// Frontend
+// -----------------------------------------------
+
+
+async function add_username() {
+	
+	RepoAobj.filename = "gift.env";
+	RepoAobj.input_text = document.getElementById("QUOTE_TO_CHATBOT_API_KEY").value+"|"+RepoAobj.repoA_name;
+
+  const classObj = new encrypted_CRUD_file_database(RepoAobj);
+	const obj = await classObj.add_username_to_file_database();
+
+	document.getElementById("notification").innerHTML = "Your entered username: "+document.getElementById("QUOTE_TO_CHATBOT_API_KEY").value+", is "+obj.query_search_result+" in the file database. "+obj.query_insert_result;
+
+  // Remove button to add username
+  document.getElementById("add_username").style.display = "none";
+}
+
+
+async function add_data() {
+	
+	RepoAobj.filename = "encyrpted_file.txt";
+	RepoAobj.input_text = document.getElementById("add_data_text").value;
+
+  const classObj = new encrypted_CRUD_file_database(RepoAobj);
+	const obj = await classObj.add_data_to_file_database();
+
+	document.getElementById("notification").innerHTML = obj.query_insert_result;
+}
+
+
+// -----------------------------------------------
+  
+async function frontend_processing() {
+  
+	// Run model
+	await Gemini_textgeneration_w_quotes();
+}
+
+// -----------------------------------------------
+
+async function Gemini_textgeneration_w_quotes() {
+  
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+  
+  // Get encrypted data from v1
+  const quotes_data = await get_data_from_encrypted_file();
+  // OR
+  // Get data from chromadb
+  // const quotes_data = await get_data_from_encrypted_file();
+  
+  const prompt = "Respond to the given question: "+document.getElementById("input_text").value+", using the following information: "+quotes_data+". If the question can not be responded to using the information, return 'The question could not be answered using the inputted data'.";
+  
+  await model.generateContent(prompt)
+    .then(async function() { 
+			document.getElementById('notification').innerHTML = "Gemini is processing your request"; 
+		})
+    .then(async function(result) { 
+      document.getElementById('response').innerHTML += result.response.text(); 
+      await print_response_to_frontend();
+    })
+    .then(async function() { 
+			document.getElementById('notification').innerHTML = "Processing finished"; 
+		})
+		.catch(error => { document.getElementById('error').innerHTML = error; });
+}
+	
+// -----------------------------------------------
+
+async function get_data_from_encrypted_file() {
+	
+	RepoAobj.filename = "encyrpted_file.txt";
+	RepoAobj.input_text = "";
+  
+	const classObj = new encrypted_CRUD_file_database(RepoAobj);
+	const obj = await classObj.return_file_database();
+
+  return obj.decrypted_file_database;
+		
+}
+
+// -----------------------------------------------
+
+  
+async function get_data_from_chromadb() {
+
+  console.log('to do');
+	
+}
+
+// -----------------------------------------------
+
+  
+async function print_response_to_frontend() {
+
+	document.getElementById("chatbot_output").style.display = "block";
+	
+	// Print response to Frontend here
+	let tbl = document.getElementById("chatbot_output");
+	let tblBody = document.createElement("tbody");
+	
+	// Add to Frontend: Create a cellText OR textarea
+	let row = document.createElement("tr");
+	let cell = document.createElement("td");
+	cell.style.backgroundColor = "#cacccf";
+	let cellText = document.createTextNode(`User: ${document.getElementById("input_text").value}`);
+	cell.appendChild(cellText);
+	cell.style.border = "10px solid rgba(0, 0, 0, 0)";
+	row.appendChild(cell);
+	tblBody.appendChild(row);
+	tbl.appendChild(tblBody);
+	
+	// Add chatbot output to Frontend: Create a cellText OR textarea
+	row = document.createElement("tr");
+	cell = document.createElement("td");
+	cell.style.backgroundColor = "#dbc49e";
+	cellText = document.createTextNode(`Chatbot: ${document.getElementById('response').innerHTML}`);
+	cell.appendChild(cellText);
+	cell.style.border = "10px solid rgba(0, 0, 0, 0)";
+	row.appendChild(cell);
+	tblBody.appendChild(row);
+	tbl.appendChild(tblBody);
+
+	// Reset response
+	document.getElementById('response').textContent = "";
+	
+}
+
+// -----------------------------------------------
+
+
+
+</script>
+
+  
+</body>
+</html>
