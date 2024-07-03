@@ -105,12 +105,14 @@ async function GET_repo_file_info_RESTAPI_fast(RepoAobj) {
   
   
 async function add_data_to_chatbot_model() {
-
-  // 0. determine if there is a username for the gift user
-  const classObj = new encrypted_CRUD_file_database(RepoAobj);
-  RepoAobj.filename = "gift.env";
-
-  const text_out = await GET_repo_file_info_RESTAPI_fast(RepoAobj);
+	
+	// 0. determine if there is a username for the gift user
+	const classObj = new encrypted_CRUD_file_database(RepoAobj);
+	RepoAobj.filename = "gift.env";
+	console.log("RepoAobj: ", RepoAobj);
+	
+	const text_out = await GET_repo_file_info_RESTAPI_fast(RepoAobj);
+	console.log("text_out: ", text_out);
 
   // There is no username file, so ask the username to create a gift.env file
   if (text_out != '404: Not Found') {
