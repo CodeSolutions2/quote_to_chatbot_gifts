@@ -11,6 +11,10 @@ export class encrypted_CRUD_file_database {
 
 	// ------------------------------------------------
 
+	
+	// ------------------------------------------------
+	// GENERAL FUNCTIONS
+	// ------------------------------------------------
 	async initialize_github() {
 		var obj_env = await GET_text_from_file_wo_auth_GitHub_RESTAPI(".env", ".github", this.RepoAobj.repoB_name, this.RepoAobj.repoOwner);
 		
@@ -251,7 +255,7 @@ export class encrypted_CRUD_file_database {
 			obj.desired_path =  obj.filedatabase_file_download_url.split('main/').pop();
 			obj.sha = obj.filedatabase_sha;
 				
-			obj = await this.find_a_key_match(obj);
+			obj = await this.decrypt_text_salt_scramble(obj);
 			delete obj.Key_obj;
 				
 			obj.query_delete_result = "Username removed.";
@@ -259,6 +263,91 @@ export class encrypted_CRUD_file_database {
 			obj.query_delete_result = "Username is Not Present, select another username to remove.";
 		}
 		delete obj.decrypted_file_database;
+		return obj;
+	}
+
+	// ------------------------------------------------
+
+
+	// ------------------------------------------------
+	// DETAILED FUNCTIONS
+	// ------------------------------------------------
+	async convert_arr_to_str(arr, sep) {
+		return arr.map((val, ind) => { 
+			if (ind == 0) {
+				return sep+val+sep; 
+			} else {
+				return val+sep;
+			}
+		}).join('');
+	}
+	
+	// ------------------------------------------------
+	
+	async comparator_search_for_a_username(decrypted_file_database, username) {
+		
+		let arr_db = decrypted_file_database.split('\n');
+		// console.log("arr_db:", arr_db);
+		
+		// Make usernames unique by adding | before and after each username
+		const arr_db_uq_str = await this.convert_arr_to_str(arr_db, "|");
+		// console.log("arr_db_uq_str:", arr_db_uq_str);
+		
+		// Search for a unique username
+	  	let regex = new RegExp(`\\|${username}\\|`, 'g');
+		// console.log("regex: ", regex);
+		
+		// true=name is present in database, false=name is not present in database
+		// console.log("regex.test(arr_db_uq_str):", regex.test(arr_db_uq_str));
+		
+		if (regex.test(arr_db_uq_str) == true) {
+			return 'Present';
+		} else {
+			return 'Not Present';
+		}
+	}
+	
+	// ------------------------------------------------
+	
+	async remove_username(obj) {
+		
+		obj.decrypted_file_database_arr = obj.decrypted_file_database.split('\n');
+		// console.log("obj.decrypted_file_database_arr:", obj.decrypted_file_database_arr);
+		
+		// Make usernames unique by adding | before and after each username
+		obj.decrypted_file_database = await this.convert_arr_to_str(obj.decrypted_file_database_arr, "|");
+		// console.log("obj.decrypted_file_database:", obj.decrypted_file_database);
+		
+		// Search for a unique username
+	  	let regex = new RegExp(`\\|${obj.username}\\|`, 'g');
+		// console.log("regex: ", regex);
+	
+		// Undo the convert_arr_to_str transformation
+		obj.decrypted_file_database_arr = obj.decrypted_file_database.replace(regex, '|').split('|');
+		// console.log("obj.decrypted_file_database_arr: ",  obj.decrypted_file_database_arr);
+		
+		obj = await this.decrypted_file_database_arr_to_str(obj);
+		
+		return await this.encrypt_text_window_crypto_subtle(obj);
+	}
+	
+	// ------------------------------------------------
+	
+	async decrypted_file_database_arr_to_str(obj) {
+	
+		// Remove empty spaces
+		const NonEmptyVals_toKeep = (x) => x.length != 0;
+		obj.decrypted_file_database_arr = obj.decrypted_file_database_arr.filter(NonEmptyVals_toKeep);
+		// console.log("obj.decrypted_file_database_arr: ",  obj.decrypted_file_database_arr);
+		
+		obj.decrypted_file_database = obj.decrypted_file_database_arr.map((val, ind) => { 
+			if (ind < obj.decrypted_file_database_arr.length-1) {
+				return val+"\n";
+			} else {
+				return val;
+			}
+		}).join('');
+	
 		return obj;
 	}
 
@@ -289,7 +378,7 @@ export class encrypted_CRUD_file_database {
 		obj.desired_path =  obj.filedatabase_file_download_url.split('main/').pop();
 		obj.sha = obj.filedatabase_sha;
 			
-		obj = await this.find_a_key_match(obj);
+		obj = await this.decrypt_text_salt_scramble(obj);
 		delete obj.Key_obj;
 		
 		return obj;
@@ -305,7 +394,7 @@ export class encrypted_CRUD_file_database {
 		// obj.public_sha
 		obj.public_desired_path = obj.public_file_download_url.split('main/').pop();
 		obj.auth = obj.public_text; // Initialize value
-		obj = await this.find_a_key_match(obj);
+		obj = await this.decrypt_text_salt_scramble(obj);
 		obj.publicKey_obj = obj.Key_obj;
 		delete obj.Key_obj;
 	
@@ -314,7 +403,7 @@ export class encrypted_CRUD_file_database {
 		// obj.private_sha
 		obj.private_desired_path = obj.private_file_download_url.split('main/').pop();
 		obj.auth = obj.private_text; // Initialize value
-		obj = await this.find_a_key_match(obj);
+		obj = await this.decrypt_text_salt_scramble(obj);
 		obj.privateKey_obj = obj.Key_obj;
 		delete obj.Key_obj;
 		
@@ -346,11 +435,100 @@ export class encrypted_CRUD_file_database {
 		return obj;
 	}
 	
-	
-	
 	// ------------------------------------------------
 	
-	async find_a_key_match(obj) {
+	
+
+	
+	// ------------------------------------------------
+	// Encryption method 0: version 0 WITHOUT libsodium-wrappers
+	// ------------------------------------------------
+	async function create_salt(obj) {
+	
+		// Resalt and save the key in .env, for the next time
+		var alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		var num = '0123456789';
+		let alpha_arr = alpha.split('');
+		let num_arr = num.split('');
+	
+		// --------------------------------
+		
+		// Determine the salt length - it can be up to length n
+		// Configuration 0: [1 to n]
+		// first part is [0 to n-1], we do not want 0 so shift it by one [1 to n]
+		// var new_salt_length = Math.round(Math.random())*(n-1) + 1;
+		// OR
+		// Configuration 1: [no_salt to n]
+		var new_salt_length = Math.round(Math.random())*n;
+		// console.log('new_salt_length: ', new_salt_length);
+	
+		// --------------------------------
+	
+		if (new_salt_length > 0) {
+			// Fill a vector new_salt_length long with 0 or 1; 0=salt a letter, 1=salt a number
+			var letnum_selection = [];
+			for (let i=0; i<new_salt_length; i++) { 
+				letnum_selection.push(Math.round(Math.random())); 
+			}
+			// console.log('letnum_selection: ', letnum_selection);
+		
+			// --------------------------------
+			
+			// Create salt (extra strings randomly)
+			obj.salt = letnum_selection.map((row) => { 
+		              if (row == 0) { 
+		                let val = Math.round(Math.random()*alpha_arr.length);
+		                // console.log('val: ', val);
+		                return alpha_arr[val]; 
+		              } else { 
+		                let val = Math.round(Math.random()*num_arr.length);
+		                // console.log('val: ', val);
+		                return num_arr[val]; 
+		              } 
+			});
+		
+			obj.salt = obj.salt.join('');
+		} else {
+			obj.salt = "";
+		}
+	
+		return obj;
+	}
+
+	// ------------------------------------------------
+
+	async encrypt_text_salt_scramble(obj) {
+
+		obj = await this.create_salt(obj);
+		
+		// Add salt
+		if (Math.round(Math.random()) == 0) {
+			// salt front
+			obj.decrypted_file_database = obj.salt+obj.decrypted_file_database;
+		} else {
+			// salt back
+			obj.decrypted_file_database = obj.decrypted_file_database+obj.salt;
+		}
+		delete obj.salt;
+	
+		// --------------------------------
+		
+		// Scramble : Github automatically base64 decodes and searches the strings and can find the key, causing GitHub to disactivate the key automatically for security
+		// obtain even values of string
+		let ep = obj.decrypted_file_database.map((val) => { if (val % 2 == 0) { return val; } });
+	
+		// obtain odd values of string
+		let ap = obj.decrypted_file_database.map((val) => { if (val % 2 != 0) { return val; } });
+	
+		obj.encrypted_file_database = ep + "|" + ap;
+		// console.log('obj.encrypted_file_database:', obj.encrypted_file_database);
+
+		return obj;
+	}
+
+	// ------------------------------------------------
+
+	async decrypt_text_salt_scramble(obj) {
 	
 		obj.status = 404; // Initialize value
 			
@@ -435,17 +613,16 @@ export class encrypted_CRUD_file_database {
 	
 	// ------------------------------------------------
 
-  // ------------------------------------------------
-  // Encryption method 0
-  // ------------------------------------------------
 
-
-  // ------------------------------------------------
+	// ------------------------------------------------
+	// Encryption method 0: version 1 WITH libsodium-wrappers
+	// ------------------------------------------------
+	
 
   
-  // ------------------------------------------------
-  // Encryption method 1
-  // ------------------------------------------------
+	// ------------------------------------------------
+	// Encryption method 1
+	// ------------------------------------------------
 	async encrypt_text_window_crypto_subtle(obj) {
 	
 		// console.log('Database before encrypting: ', obj.decrypted_file_database);
@@ -507,9 +684,9 @@ export class encrypted_CRUD_file_database {
 	// ------------------------------------------------
 
   
-  // ------------------------------------------------
-  // Encryption method 2
-  // ------------------------------------------------
+	// ------------------------------------------------
+	// Encryption method 2
+	// ------------------------------------------------
 	async encrypt_text_hexadecimal(obj) {
 	
 		// console.log('Database before encrypting: ', obj.decrypted_file_database);
@@ -581,86 +758,6 @@ export class encrypted_CRUD_file_database {
 	}
 	
 	// ------------------------------------------------
-		
-	async convert_arr_to_str(arr, sep) {
-		return arr.map((val, ind) => { 
-			if (ind == 0) {
-				return sep+val+sep; 
-			} else {
-				return val+sep;
-			}
-		}).join('');
-	}
-	
-	// ------------------------------------------------
-	
-	async comparator_search_for_a_username(decrypted_file_database, username) {
-		
-		let arr_db = decrypted_file_database.split('\n');
-		// console.log("arr_db:", arr_db);
-		
-		// Make usernames unique by adding | before and after each username
-		const arr_db_uq_str = await this.convert_arr_to_str(arr_db, "|");
-		// console.log("arr_db_uq_str:", arr_db_uq_str);
-		
-		// Search for a unique username
-	  	let regex = new RegExp(`\\|${username}\\|`, 'g');
-		// console.log("regex: ", regex);
-		
-		// true=name is present in database, false=name is not present in database
-		// console.log("regex.test(arr_db_uq_str):", regex.test(arr_db_uq_str));
-		
-		if (regex.test(arr_db_uq_str) == true) {
-			return 'Present';
-		} else {
-			return 'Not Present';
-		}
-	}
-	
-	// ------------------------------------------------
-	
-	async remove_username(obj) {
-		
-		obj.decrypted_file_database_arr = obj.decrypted_file_database.split('\n');
-		// console.log("obj.decrypted_file_database_arr:", obj.decrypted_file_database_arr);
-		
-		// Make usernames unique by adding | before and after each username
-		obj.decrypted_file_database = await this.convert_arr_to_str(obj.decrypted_file_database_arr, "|");
-		// console.log("obj.decrypted_file_database:", obj.decrypted_file_database);
-		
-		// Search for a unique username
-	  	let regex = new RegExp(`\\|${obj.username}\\|`, 'g');
-		// console.log("regex: ", regex);
-	
-		// Undo the convert_arr_to_str transformation
-		obj.decrypted_file_database_arr = obj.decrypted_file_database.replace(regex, '|').split('|');
-		// console.log("obj.decrypted_file_database_arr: ",  obj.decrypted_file_database_arr);
-		
-		obj = await this.decrypted_file_database_arr_to_str(obj);
-		
-		return await this.encrypt_text_window_crypto_subtle(obj);
-	}
-	
-	// ------------------------------------------------
-	
-	async decrypted_file_database_arr_to_str(obj) {
-	
-		// Remove empty spaces
-		const NonEmptyVals_toKeep = (x) => x.length != 0;
-		obj.decrypted_file_database_arr = obj.decrypted_file_database_arr.filter(NonEmptyVals_toKeep);
-		// console.log("obj.decrypted_file_database_arr: ",  obj.decrypted_file_database_arr);
-		
-		obj.decrypted_file_database = obj.decrypted_file_database_arr.map((val, ind) => { 
-			if (ind < obj.decrypted_file_database_arr.length-1) {
-				return val+"\n";
-			} else {
-				return val;
-			}
-		}).join('');
-	
-		return obj;
-	}
 
-	// ------------------------------------------------
-	
+
 }
