@@ -2,8 +2,8 @@ import { GET_text_from_file_wo_auth_GitHub_RESTAPI, GET_fileDownloadUrl_and_sha,
 
 // ------------------------------------------------
 
-// Encrypted Create, Read, Update, Delete file database
-export class encrypted_CRUD_file_database {
+// Encrypted Create, Read, Update, Delete file storage
+export class encrypted_CRUD_file_storage {
 
 	constructor(RepoAobj) {
 		this.RepoAobj = RepoAobj;
