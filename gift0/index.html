@@ -7,6 +7,9 @@
 <button class="buttonClass" id="run_yaml_process_onButton_click" type="button" style="display:block;">Submit input</button>
 
 <button id="run_library" onclick="run_library()" style="display:block;">run_library</button>
+
+<input class="inputClass" type="text" id="text_input" value="" style="display:block;">
+	
   
 <div id="notification"></div>
 <div id="error"></div>
@@ -61,7 +64,7 @@ document.getElementById("run_yaml_process_onButton_click").addEventListener("cli
 	// it waits for the button to be pushed - then runs a process
 	
 	
-	await html_process()
+	await run_library()
 		.then(async function() {
 			// Step 1: Frontend = make the button [NOT be found in the DOM or to be hidden] to make the Backend detect that the Frontend is finished ({visible: false} in yaml)
 			await setTimeout(function() { document.getElementById("run_yaml_process_onButton_click").style.display = 'none'; }, 300)
