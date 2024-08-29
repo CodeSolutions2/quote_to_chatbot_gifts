@@ -45,12 +45,12 @@ jobs:
               
               await page.goto(URL);
 
-              const inputValue = await page.$eval('input[type="text"]', input => input.value);
-              console.log('Input value:', inputValue);
+              await page.setContent('<div id="output"></div>');
 
+              const textToPrint = 'Hello, Puppeteer!';
+              await page.evaluate((text) => { document.getElementById('output').innerText = text; }, textToPrint);
               
               await browser.close();
-            
             } catch (error) {
               console.log('error: ', error);
             }
