@@ -30,17 +30,25 @@ document.getElementById("run_yaml_process_onButton_click").addEventListener("cli
 	// Way 0: The yaml is alway running (not sure)
 	// it waits for the button to be pushed - then runs a process
 	
-	// Step 1: Frontend = make the button [NOT be found in the DOM or to be hidden] to make the Backend detect that the Frontend is finished ({visible: false} in yaml)
-	await setTimeout(function() { document.getElementById("run_yaml_process_onButton_click").style.display = 'none'; }, 300)
+	
+	await html_process()
+		.then(async function() {
+			// Step 1: Frontend = make the button [NOT be found in the DOM or to be hidden] to make the Backend detect that the Frontend is finished ({visible: false} in yaml)
+			await setTimeout(function() { document.getElementById("run_yaml_process_onButton_click").style.display = 'none'; }, 300)
+		})
 		.then(function() {
 			// Step 2: Frontend = continue to ensure that the button visible (style="display:block;")
 			document.getElementById("run_yaml_process_onButton_click").style.display = 'block';
-			console.log('Button clicked: from html!');
+			
 		});
 	
 });
   
 
+async function html_process() {
+	console.log('Button clicked: from html!');
+}
+	
 </script>
 
   
