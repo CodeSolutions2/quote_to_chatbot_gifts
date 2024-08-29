@@ -37,16 +37,7 @@ const module = {};
 // -----------------------------------------------
 	
 window.addEventListener('beforeunload', async function() {
-	
 	window.location.href = window.location.href + '?nocache=' + new Date().getTime();
-
-	// The yaml needs to be triggered to run when someone goes to the webpage
-	// Way 0: use my library and create a file in the repository to trigger the yaml
-	
-	
-
-	console.log('Finished loading setup');
-
 });
 
 // -----------------------------------------------
@@ -79,12 +70,6 @@ document.getElementById("run_yaml_process_onButton_click").addEventListener("cli
 
 // -----------------------------------------------
 
-async function html_process() {
-	console.log('Button clicked: from html!');
-}
-
-// -----------------------------------------------
-
 async function run_library() {
 	
 	// This function creates a file cb.txt in a folder to launch a yaml process.
@@ -95,7 +80,7 @@ async function run_library() {
   	RepoAobj.foldername = 'gift0'; // foldername in RepoB
 	
 	RepoAobj.filename = 'cb.txt';
-	RepoAobj.input_text = "launch yaml"+"|"+RepoAobj.repoA_name;
+	RepoAobj.input_text = document.getElementById("text_input").value+"|"+RepoAobj.repoA_name;
 	RepoAobj.repoB_name = 'quote_to_chatbot_gifts';
 
 	// Way 1
