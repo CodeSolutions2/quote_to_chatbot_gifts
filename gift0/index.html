@@ -22,8 +22,23 @@ window.addEventListener('beforeunload', function() {
   
 document.getElementById("run_yaml_process_onButton_click").addEventListener("click", async () => {
 
-  // Way 0: Create an event that can be seen in the yaml
+	// 0. Ensure that user filled out input - give error and do not run yaml (do not know how to do this)
+	//   - this would need to be done in the yaml
 
+	
+	// 1.
+	// Way 0: The yaml is alway running (not sure)
+	// it waits for the button to be pushed - then runs a process
+	
+	// Step 1: Frontend = make the button [NOT be found in the DOM or to be hidden] to make the Backend detect that the Frontend is finished ({visible: false} in yaml)
+	await setTimeout(function() { document.getElementById("run_yaml_process_onButton_click").style.display = 'none'; }, 300)
+		.then(function() {
+			// Step 2: Frontend = continue to ensure that the button visible (style="display:block;")
+			document.getElementById("run_yaml_process_onButton_click").style.display = 'block';
+		})
+	// 
+	
+	
 
 
   
