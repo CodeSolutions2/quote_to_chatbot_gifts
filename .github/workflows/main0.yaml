@@ -45,9 +45,8 @@ jobs:
               
               await page.goto(URL);
 
-              await page.evaluate(() => { document.querySelector('#run_yaml_process_onButton_click').addEventListener('click', () => { console.log('Button clicked: from yaml!'); }); });
-              
-              await page.waitForSelector('#run_yaml_process_onButton_click', {visible: false});
+              await page.evaluate(() => { var input_text = document.querySelector("#text_input").innerHTML; console.log("input_text: ", input_text); });
+
               
               await browser.close();
             
