@@ -1,1 +1,1 @@
-test test|quote_to_chatbot_gifts
+|quote_to_chatbot_gifts
