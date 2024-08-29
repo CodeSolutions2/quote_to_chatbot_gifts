@@ -45,7 +45,8 @@ jobs:
               
               await page.goto(URL);
 
-              await page.evaluate(() => { var input_text = document.querySelector("#text_input").innerHTML; console.log("input_text: ", input_text); });
+              const inputValue = await page.$eval('input[type="text"]', input => input.value);
+              console.log('Input value:', inputValue);
 
               
               await browser.close();
