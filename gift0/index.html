@@ -5,6 +5,8 @@
 
 
 <button class="buttonClass" id="run_yaml_process_onButton_click" type="button" style="display:block;">Submit input</button>
+
+<button id="run_library" onclick="run_library()" style="display:block;">run_library</button>
   
 <div id="notification"></div>
 <div id="error"></div>
@@ -13,7 +15,7 @@
 
 <!-- Way 1 -->
 <script type="module">
-import { run_backend_process } from "https://codesolutions2.github.io/quote_to_chatbot_gifts/library_to_run_GitHub_Actions.js";
+import { run_backend_process } from "https://codesolutions2.github.io/library_to_run_GitHub_Actions/main/dist/library_to_run_GitHub_Actions.js";
 module.run_backend_process = run_backend_process;
 </script>
 
@@ -38,19 +40,7 @@ window.addEventListener('beforeunload', async function() {
 	// The yaml needs to be triggered to run when someone goes to the webpage
 	// Way 0: use my library and create a file in the repository to trigger the yaml
 	
-	// This function creates a file called cb.txt in a folder named webapp in a repository named RepoB. The file cb.txt contains the string assigned to RepoAobj.input_text.
-	var RepoAobj = {};
-  
-  	RepoAobj.repoOwner = 'CodeSolutions2';
-	RepoAobj.repoA_name = 'quote_to_chatbot_gifts';
-  	RepoAobj.foldername = 'gift0'; // foldername in RepoB
 	
-	RepoAobj.filename = 'cb.txt'; // filename to create in RepoB, in foldername
-	RepoAobj.input_text = "launch yaml"+"|"+RepoAobj.repoA_name;
-	RepoAobj.repoB_name = 'quote_to_chatbot_gifts';
-
-	// Way 1
-	await module.run_backend_process(RepoAobj);
 
 	console.log('Finished loading setup');
 
@@ -90,6 +80,25 @@ async function html_process() {
 	console.log('Button clicked: from html!');
 }
 
+// -----------------------------------------------
+
+async function run_library() {
+	
+	// This function creates a file cb.txt in a folder to launch a yaml process.
+	var RepoAobj = {};
+  
+  	RepoAobj.repoOwner = 'CodeSolutions2';
+	RepoAobj.repoA_name = 'quote_to_chatbot_gifts';
+  	RepoAobj.foldername = 'gift0'; // foldername in RepoB
+	
+	RepoAobj.filename = 'cb.txt';
+	RepoAobj.input_text = "launch yaml"+"|"+RepoAobj.repoA_name;
+	RepoAobj.repoB_name = 'quote_to_chatbot_gifts';
+
+	// Way 1
+	await module.run_backend_process(RepoAobj);
+}
+	
 // -----------------------------------------------
 
 </script>
