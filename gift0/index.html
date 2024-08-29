@@ -48,8 +48,8 @@ window.addEventListener('beforeunload', function() {
 	RepoAobj.input_text = "launch yaml"+"|"+RepoAobj.repoA_name;
 	RepoAobj.repoB_name = 'quote_to_chatbot_gifts';
 
-	// Way 2
-	async () => { await run_backend_process(RepoAobj); }
+	// Way 1
+	async () => { await module.run_backend_process(RepoAobj); }
 
 	console.log('Finished loading setup')
 
