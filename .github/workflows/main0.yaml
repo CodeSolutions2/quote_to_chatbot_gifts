@@ -1,1 +1,54 @@
+name: run when button is pushed
 
+on:
+  push:
+    branches:
+      - main
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency: 
+      group: "webapp"
+      cancel-in-progress: false
+
+jobs:
+  run_index_html:
+    runs-on: ubuntu-latest
+
+    permissions: write-all
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - run: npm install puppeteer; 
+
+      - name: Load webpage using a non-graphical browser
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const puppeteer = require('puppeteer');
+            try {
+              const URL = "https://codesolutions2.github.io/quote_to_chatbot_gifts/gift0/index.html";
+              const browser = await puppeteer.launch({headless: true});
+              const page = await browser.newPage();
+              
+              page.on('load', () => { console.log('Page loaded successfully'); });
+              
+              await page.goto(URL);
+
+              await page.evaluate(() => { document.querySelector('#run_yaml_process_onButton_click').addEventListener('click', () => { console.log('Button clicked: from yaml!'); }); });
+              
+              await page.waitForSelector('#run_yaml_process_onButton_click', {visible: false});
+              
+              await browser.close();
+            
+            } catch (error) {
+              console.log('error: ', error);
+            }
