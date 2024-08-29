@@ -31,7 +31,8 @@ const module = {};
 	
 // -----------------------------------------------
 	
-window.addEventListener('beforeunload', function() {
+window.addEventListener('beforeunload', async function() {
+	
 	window.location.href = window.location.href + '?nocache=' + new Date().getTime();
 
 	// The yaml needs to be triggered to run when someone goes to the webpage
@@ -49,9 +50,9 @@ window.addEventListener('beforeunload', function() {
 	RepoAobj.repoB_name = 'quote_to_chatbot_gifts';
 
 	// Way 1
-	async () => { await module.run_backend_process(RepoAobj); }
+	await module.run_backend_process(RepoAobj);
 
-	console.log('Finished loading setup')
+	console.log('Finished loading setup');
 
 });
 
