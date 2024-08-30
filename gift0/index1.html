@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head></head>
+<body>
+
+
+<button class="buttonClass" id="run_yaml_process_onButton_click" type="button" style="display:block;">Submit input</button>
+
+<!-- <button id="run_library" onclick="run_library()" style="display:block;">run_library</button> -->
+
+<input class="inputClass" type="text" id="text_input" value="" style="display:block;">
+	
+  
+<div id="notification"></div>
+<div id="error"></div>
+<div id="response"></div>
+
+
+<!-- Way 1 -->
+<script type="module" redirect="follow" mode="no-cors">
+import { run_backend_process } from "https://codesolutions2.github.io/quote_to_chatbot_gifts/library_to_run_GitHub_Actions.js";
+module.run_backend_process = run_backend_process;
+</script>
+
+<!-- Way 3 -->
+<!-- <script type="module" src="https://cdn.jsdelivr.net/npm/library_to_run_github_actions@1.0.1/index.min.js" crossorigin="*" redirect="follow" mode="cors"></script> -->
+<!-- Loading modeule was blocked because of a disallowed MIME type -->
+
+	
+<script>
+
+// -----------------------------------------------
+	
+// Way 1
+const module = {};
+	
+// -----------------------------------------------
+	
+window.addEventListener('beforeunload', async function() {
+	window.location.href = window.location.href + '?nocache=' + new Date().getTime();
+});
+
+// -----------------------------------------------
+
+
+  
+document.getElementById("run_yaml_process_onButton_click").addEventListener("click", async () => {
+
+	// 0. Ensure that user filled out input - give error and do not run yaml (do not know how to do this)
+	//   - this would need to be done in the yaml
+
+	
+	// 1.
+	// Way 0: The yaml is alway running (not sure)
+	// it waits for the button to be pushed - then runs a process
+	
+	
+	await run_library()
+		.then(async function() {
+			// Step 1: Frontend = make the button [NOT be found in the DOM or to be hidden] to make the Backend detect that the Frontend is finished ({visible: false} in yaml)
+			await setTimeout(function() { document.getElementById("run_yaml_process_onButton_click").style.display = 'none'; }, 300)
+		})
+		.then(function() {
+			// Step 2: Frontend = continue to ensure that the button visible (style="display:block;")
+			document.getElementById("run_yaml_process_onButton_click").style.display = 'block';
+			
+		});
+	
+});
+
+// -----------------------------------------------
+
+async function run_library() {
+	
+	// This function creates a file cb.txt in a folder to launch a yaml process.
+	var RepoAobj = {};
+  
+  	RepoAobj.repoOwner = 'CodeSolutions2';
+	RepoAobj.repoA_name = 'quote_to_chatbot_gifts';
+  	RepoAobj.foldername = 'gift0'; // foldername in RepoB
+	
+	RepoAobj.filename = 'cb.txt';
+	RepoAobj.input_text = document.getElementById("text_input").value+"|"+RepoAobj.repoA_name;
+	RepoAobj.repoB_name = 'quote_to_chatbot_gifts';
+
+	// Way 1
+	await module.run_backend_process(RepoAobj);
+}
+	
+// -----------------------------------------------
+
+</script>
+</body>
+</html>
