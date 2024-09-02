@@ -46,7 +46,7 @@ jobs:
               await page.goto(URL);
 
                 // Output text to HTML element
-              await page.type('#textarea_id', 'Before getting input text');
+              // await page.type('#textarea_id', 'Before getting input text');
               
               // Input text from HTML element
               const element = await page.waitForSelector('#p_id', {visible: true});
@@ -54,7 +54,7 @@ jobs:
               console.log("value: ", value);
               
               // Output text to HTML element
-              await page.type('#textarea_id2', 'After getting input text');
+              // await page.type('#textarea_id2', 'After getting input text');
               
               await browser.close();
             } catch (error) {
