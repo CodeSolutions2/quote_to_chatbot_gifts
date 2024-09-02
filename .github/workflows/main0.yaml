@@ -46,7 +46,7 @@ jobs:
               await page.goto(URL);
 
               // Input text from HTML element
-              const element = await page.waitForSelector('#p_id');
+              const element = await page.waitForSelector('#p_id', {visible: true});
               const value = await element.evaluate(res => res.textContent);
               console.log("value: ", value);
               
