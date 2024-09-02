@@ -45,15 +45,16 @@ jobs:
               
               await page.goto(URL);
 
+                // Output text to HTML element
+              await page.type('#textarea_id', 'Before getting input text');
+              
               // Input text from HTML element
               const element = await page.waitForSelector('#p_id', {visible: true});
               const value = await element.evaluate(res => res.textContent);
               console.log("value: ", value);
               
               // Output text to HTML element
-              // await page.setContent('<div id="output"></div>');
-              const textToPrint = 'Hello, Puppeteer!';
-              await page.type('#textarea_id', textToPrint);
+              await page.type('#textarea_id2', 'After getting input text');
               
               await browser.close();
             } catch (error) {
