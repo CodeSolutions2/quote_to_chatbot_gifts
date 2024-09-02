@@ -42,7 +42,8 @@ window.addEventListener('beforeunload', async function() {
   
 document.getElementById("run_yaml_process_onButton_click").addEventListener("click", async () => {
 	
-	await run_library()
+	await print_input_to_DOM()
+		.then(async function() { await run_library(); })
 		.then(async function() {
 			// Step 1: Frontend = make the button [NOT be found in the DOM or to be hidden] to make the Backend detect that the Frontend is finished ({visible: false} in yaml)
 			await setTimeout(function() { document.getElementById("run_yaml_process_onButton_click").style.display = 'none'; }, 300)
@@ -55,6 +56,16 @@ document.getElementById("run_yaml_process_onButton_click").addEventListener("cli
 	
 });
 
+// -----------------------------------------------
+
+async function print_input_to_DOM() {
+
+	var out = document.getElementById("text_input").value;
+	
+	document.getElementById("p_id").innerHTML = out;
+
+}
+	
 // -----------------------------------------------
 
 async function run_library() {
