@@ -4,8 +4,10 @@
 <body>
 
 
-<button class="buttonClass" id="run_yaml_process_onButton_click" type="button" style="display:block;">Submit input</button>
+<button class="buttonClass" id="run_yaml_process_onButton_click" type="button" style="display:block;">Launch yaml</button>
 
+<button class="buttonClass2" id="print_input_to_DOM" type="button" style="display:block;">print_input_to_DOM</button>
+	
 <input class="inputClass" type="text" id="text_input" value="" style="display:block;">
 
 	
@@ -43,8 +45,7 @@ window.addEventListener('beforeunload', async function() {
   
 document.getElementById("run_yaml_process_onButton_click").addEventListener("click", async () => {
 	
-	await print_input_to_DOM()
-		.then(async function() { await run_library(); })
+	await run_library()
 		.then(async function() {
 			// Step 1: Frontend = make the button [NOT be found in the DOM or to be hidden] to make the Backend detect that the Frontend is finished ({visible: false} in yaml)
 			await setTimeout(function() { document.getElementById("run_yaml_process_onButton_click").style.display = 'none'; }, 300)
