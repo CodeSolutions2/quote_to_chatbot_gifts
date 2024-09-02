@@ -1,1 +1,1 @@
-text to send to backend|quote_to_chatbot_gifts
+text text|quote_to_chatbot_gifts
