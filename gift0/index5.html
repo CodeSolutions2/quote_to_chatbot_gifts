@@ -3,21 +3,19 @@
 <head></head>
 <body>
 
-
-<button class="buttonClass" id="run_yaml_process_onButton_click" type="button" style="display:block;">Submit</button>
-
-
 <div class="wrapper">
   
   <div class="top_navbar">
+	  <!-- This determines the number of bars are shown on the left, not sure what it's function is -->
     <div class="hamburger">
        <div class="one"></div>
        <div class="two"></div>
-       <div class="three"></div>
     </div>
     
     <div class="top_menu">
+	    <!-- This is the title of the page -->
       <div class="logo">Quote-to-chatbot</div>
+	    <!-- These are circles that show on the top righ-side of the screen -->
       <ul>
         <li><a href="#"><i class="fas fa-search"></i></a></li>
         <li><a href="#"><i class="fas fa-bell"></i></a></li>
@@ -26,26 +24,33 @@
   </div>
   
   <div class="sidebar">
+	 <!-- This is a side list of how to change the contents on the main_container -->
       <ul>
-        <li><a href="#" class="active">
-          <span class="icon"><i class="fas fa-blog"></i></span>
-          <span class="title">Flag loop</span>
-          </a></li>
-    </ul>
+        <li><a href="#" class="active" id="instructions_sidebar"><span class="icon"><i class="fas fa-blog"></i></span><span class="title">Instructions</span></a></li>
+	<li><a href="#" class="active" id="chatbot_sidebar"><span class="icon"><i class="fas fa-blog"></i></span><span class="title">Chatbot</span></a></li>
+      </ul>
   </div>
   
   <div class="main_container">
-    <div class="item">Enter a question to the chatbot</div>
-    <input class="inputClass" type="text" id="text_input" placeholder="Enter a question to the chatbot" value="" style="display:block;">
+    <!-- This is displayed when sidebar instructions is selected: this should only appear when sidebar is selected -->
+    <div class="item" id="chatbot_container">
+	<h2 id="chatbot_container_title_instruction" style="display:none;">Enter a question to the chatbot</h2>
+    	<input class="inputClass" type="text" id="chatbot_container_text_input" placeholder="Enter a question to the chatbot" value="" style="display:none; text-align: left; width: 600px;">
+    	<button class="buttonClass" id="run_yaml_process_onButton_click" type="button" style="display:none;">Submit</button>
+    </div>
+	
+    <!-- This is displayed when sidebar chatbot is selected: this should only appear when sidebar is selected -->
+    <div class="item" id="instructions_container">
+	<h2 id="instructions_container_title_instruction" style="display:none;">Instructions for how to use Quote-to-chatbot gifts</h2>
+    </div>
     
+    <!-- This is displayed regardless of the sidebar -->
     <div id="notification"></div>
     <div id="error"></div>
     <div id="response"></div>
-  </div>
-  
 </div>
 
-
+	
 <!-- ---------------------------------------- -->
 <!-- CSS -->
 <style>
@@ -251,7 +256,25 @@ window.addEventListener('beforeunload', async function() {
 
 // -----------------------------------------------
 
+document.getElementById("instructions_sidebar").addEventListener("click", async () => {
+	document.getElementById("chatbot_container_title_instruction").style.display = 'none';
+	document.getElementById("chatbot_container_text_input").style.display = 'none';
+	document.getElementById("run_yaml_process_onButton_click").style.display = 'none';
 
+	document.getElementById("instructions_container_title_instruction").style.display = 'block';
+});
+	
+// -----------------------------------------------
+
+document.getElementById("chatbot_sidebar").addEventListener("click", async () => {
+	document.getElementById("chatbot_container_title_instruction").style.display = 'block';
+	document.getElementById("chatbot_container_text_input").style.display = 'block';
+	document.getElementById("run_yaml_process_onButton_click").style.display = 'block';
+
+	document.getElementById("instructions_container_title_instruction").style.display = 'none';
+});
+
+// -----------------------------------------------
   
 document.getElementById("run_yaml_process_onButton_click").addEventListener("click", async () => {
 	
@@ -270,49 +293,7 @@ document.getElementById("run_yaml_process_onButton_click").addEventListener("cli
 
 // -----------------------------------------------
 
-async function print_input_to_DOM() {
-
-	var DOM_Element = document.createElement('p');
-	DOM_Element.setAttribute("id", "p_id");
-	DOM_Element.innerHTML = document.getElementById("text_input").value;
-	document.getElementsByTagName('body')[0].appendChild(DOM_Element);
-
-}
-
-// -----------------------------------------------
-
-	
-async function print_result() {
-	await GET_repo_file_info_RESTAPI()
-		.then(async function () { await print_response_to_frontend(); document.getElementById('response').innerHTML = ""; })
-		.catch(error => { document.getElementById("error").innerHTML = error; });
-}
-
-
-// -----------------------------------------------
-
-async function GET_repo_file_info_RESTAPI() {
-	
-	await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents`)
-		.then(res => res.json())
-		.then(data => {
-			// let regexp = new RegExp(`${desired_filename}`, 'g');
-			let regexp = new RegExp('response', 'g');
-			data.forEach(file => {
-			      if (file.type === 'file' && file.name.match(regexp)) {
-				return file.download_url;
-			      }
-			    });
-		})
-		.then(async function (file_download_url) { console.log("file_download_url: ", file_download_url); return await fetch('https://raw.githubusercontent.com/CodeSolutions2/my_chatbot/main/response'); })
-		.then(res => res.text())
-		.then(async function (text_out) { document.getElementById('response').innerHTML = text_out; })
-		.catch(error => { console.log(error); });
-
-}
-  
-// -----------------------------------------------
-
+// Step 0: Create a file with the input query to launch the yaml (backend)
 async function run_library() {
 	
 	// This function creates a file cb.txt in a folder to launch a yaml process.
@@ -329,7 +310,66 @@ async function run_library() {
 	// Way 1
 	await module.run_backend_process(RepoAobj);
 }
+
+
+// -----------------------------------------------
+
+// Step 1: Click on hidden button on page from the Backend, to launch the function print_result
+async function print_result() {
+	await GET_repo_file_info_RESTAPI()
+		.then(async function () { await print_response_to_frontend(); document.getElementById('response').innerHTML = ""; })
+		.catch(error => { document.getElementById("error").innerHTML = error; });
+}
+
+
+// -----------------------------------------------
 	
+async function GET_repo_file_info_RESTAPI() {
+
+	var repoOwner = "Codesolutions2";
+	var repoName = "quote_to_chatbot_gifts";
+	var foldername = "gift0"
+	
+	await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/${foldername}/contents`)
+		.then(res => res.json())
+		.then(data => {
+			// let regexp = new RegExp(`${desired_filename}`, 'g');
+			let regexp = new RegExp('response', 'g');
+			data.forEach(file => {
+			      if (file.type === 'file' && file.name.match(regexp)) {
+				return file.download_url;
+			      }
+			    });
+		})
+		.then(async function (file_download_url) { 
+			console.log("file_download_url: ", file_download_url); 
+			return await fetch('https://raw.githubusercontent.com/CodeSolutions2/quote_to_chatbot_gifts/main/gift0/response'); 
+		})
+		.then(res => res.text())
+		.then(async function (text_out) { document.getElementById('response').innerHTML = text_out; })
+		.catch(error => { console.log(error); });
+
+}
+	
+// -----------------------------------------------
+
+
+async function print_response_to_frontend() {
+
+
+}
+
+// -----------------------------------------------
+	
+async function print_input_to_DOM() {
+
+	var DOM_Element = document.createElement('p');
+	DOM_Element.setAttribute("id", "p_id");
+	DOM_Element.innerHTML = document.getElementById("text_input").value;
+	document.getElementsByTagName('body')[0].appendChild(DOM_Element);
+
+}
+
 // -----------------------------------------------
 
 </script>
