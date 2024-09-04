@@ -4,7 +4,7 @@
       "content": {
         "parts": [
           {
-            "text": "Please provide me with some context or a question so I can assist you. \n\nFor example, you could ask:\n\n* \"What is the capital of France?\"\n* \"Can you tell me about the history of the internet?\"\n* \"Write a short story about a cat who goes on an adventure.\"\n\nI'm here to help! \n"
+            "text": "Please provide me with some context or information so I can assist you. \n\nFor example, you could tell me:\n\n* **What you want to do:**  \"I want to write a poem about a cat,\" or \"I need help understanding this math problem.\"\n* **What you're working on:** \"I'm working on a research paper about climate change.\"\n* **What you're curious about:** \"I'm curious about the history of the internet.\"\n\nThe more information you give me, the better I can understand your needs and provide you with helpful responses. \n"
           }
         ],
         "role": "model"
@@ -32,7 +32,7 @@
     }
   ],
   "usageMetadata": {
-    "candidatesTokenCount": 72,
-    "totalTokenCount": 72
+    "candidatesTokenCount": 122,
+    "totalTokenCount": 122
   }
 }
