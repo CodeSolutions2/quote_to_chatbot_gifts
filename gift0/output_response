@@ -1,7 +1,38 @@
 {
-  "error": {
-    "code": 400,
-    "message": "Invalid JSON payload received. Unexpected token.\n:[{\"parts\":[{\"text\":$INPUT_TEXT}]}]}\n                    ^",
-    "status": "INVALID_ARGUMENT"
+  "candidates": [
+    {
+      "content": {
+        "parts": [
+          {
+            "text": "Please provide me with some context or information about what you want me to do. I need more information to understand your request.  \n\nFor example, tell me:\n\n* **What are you trying to achieve?** \n* **What kind of information are you looking for?**\n* **Are you asking me to generate something, like text or code?**\n* **What is the specific topic or subject you're interested in?**\n\nThe more details you give me, the better I can assist you! \n"
+          }
+        ],
+        "role": "model"
+      },
+      "finishReason": "STOP",
+      "index": 0,
+      "safetyRatings": [
+        {
+          "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          "probability": "NEGLIGIBLE"
+        },
+        {
+          "category": "HARM_CATEGORY_HATE_SPEECH",
+          "probability": "NEGLIGIBLE"
+        },
+        {
+          "category": "HARM_CATEGORY_HARASSMENT",
+          "probability": "NEGLIGIBLE"
+        },
+        {
+          "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+          "probability": "NEGLIGIBLE"
+        }
+      ]
+    }
+  ],
+  "usageMetadata": {
+    "candidatesTokenCount": 107,
+    "totalTokenCount": 107
   }
 }
