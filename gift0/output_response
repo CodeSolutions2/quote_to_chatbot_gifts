@@ -4,7 +4,7 @@
       "content": {
         "parts": [
           {
-            "text": "Please provide me with some context or a question so I can assist you.  For example:\n\n* **\"What is the capital of France?\"**\n* **\"Write a short story about a talking cat.\"**\n* **\"Can you summarize the plot of the movie 'The Matrix'?\"**\n\nI'm ready to help! \n"
+            "text": "Please provide me with some context or a question so I can assist you. What would you like to know or discuss? \n"
           }
         ],
         "role": "model"
@@ -32,7 +32,7 @@
     }
   ],
   "usageMetadata": {
-    "candidatesTokenCount": 71,
-    "totalTokenCount": 71
+    "candidatesTokenCount": 24,
+    "totalTokenCount": 24
   }
 }
