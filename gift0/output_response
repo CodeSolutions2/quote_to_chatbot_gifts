@@ -4,7 +4,7 @@
       "content": {
         "parts": [
           {
-            "text": "Please provide me with some context or a question so I can assist you. What would you like to know or discuss? \n"
+            "text": "Please provide me with some context or information so I can assist you. What would you like to know or what would you like me to do? \n"
           }
         ],
         "role": "model"
@@ -32,7 +32,7 @@
     }
   ],
   "usageMetadata": {
-    "candidatesTokenCount": 24,
-    "totalTokenCount": 24
+    "candidatesTokenCount": 29,
+    "totalTokenCount": 29
   }
 }
