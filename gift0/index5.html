@@ -348,21 +348,20 @@ async function automatic_print_result() {
 	// Wait for file creation
 	var flag = "run";
 	var i = 0;
-	var max_count = 15;
 
 	document.getElementById("progress_bar").style.display = "block";
 	
-	while (flag == "run" && i < max_count) {
+	while (flag == "run" && i < 20) {
 		// keep doing GET on the repo files for 'response' until it appears
 		flag = await print_result()
 			.then(async function (text_out) {
 				console.log('text_out: ', text_out);
 				
-				if (text_out != '404: Not Found') {
+				if (text_out == '404: Not Found' || text_out == undefined) {
+					return "run";
+				} else {
 					document.getElementById('response').innerHTML = text_out;
 					return "stop";
-				} else {
-					return "run";
 				}
 			})
 			.then(async function(flag) { 
@@ -370,7 +369,7 @@ async function automatic_print_result() {
 				await new Promise(r => setTimeout(r, 10000)); 
 
 				// Update progress bar
-				document.getElementById("progress_bar").value = i/max_count*100;
+				document.getElementById("progress_bar").value = (i/20)*100;
 				
 				return flag; 
 			})
