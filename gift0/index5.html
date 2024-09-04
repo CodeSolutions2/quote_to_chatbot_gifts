@@ -38,6 +38,8 @@
     	<input class="inputClass" type="text" id="chatbot_container_text_input" placeholder="Enter a question to the chatbot" value="" style="display:none; text-align: left; width: 600px;">
     	<button class="buttonClass" id="run_yaml_process_onButton_click" type="button" style="display:none;">Submit</button>
     	<button class="buttonClass_backend" id="notify_that_response_is_done" type="button" style="display:none;"></button>
+	<br>
+	<progress id="progress_bar" max="100" value="0" style="display:none">0%</progress>
     </div>
 	
     <!-- This is displayed when sidebar chatbot is selected: this should only appear when sidebar is selected -->
@@ -279,7 +281,11 @@ document.getElementById("chatbot_sidebar").addEventListener("click", async () =>
 // -----------------------------------------------
   
 document.getElementById("run_yaml_process_onButton_click").addEventListener("click", async () => {
-	await run_library();
+	await run_library()
+		.then(async function() { await automatic_print_result(); 
+					document.getElementById("progress_bar").style.display = "none"; 
+		})
+			
 });
 
 // -----------------------------------------------
@@ -335,6 +341,46 @@ async function print_result() {
 		.catch(error => { document.getElementById("error").innerHTML = error; });
 }
 
+// -----------------------------------------------
+
+async function automatic_print_result() {
+
+	// Wait for file creation
+	var flag = "run";
+	var i = 0;
+	var max_count = 15;
+
+	document.getElementById("progress_bar").style.display = "block";
+	
+	while (flag == "run" && i < max_count) {
+		// keep doing GET on the repo files for 'response' until it appears
+		flag = await print_result()
+			.then(async function (text_out) {
+				console.log('text_out: ', text_out);
+				
+				if (text_out != '404: Not Found') {
+					document.getElementById('response').innerHTML = text_out;
+					return "stop";
+				} else {
+					return "run";
+				}
+			})
+			.then(async function(flag) { 
+				// Time to wait in between trying to read the file
+				await new Promise(r => setTimeout(r, 10000)); 
+
+				// Update progress bar
+				document.getElementById("progress_bar").value = i/max_count*100;
+				
+				return flag; 
+			})
+			.catch(error => { document.getElementById("error").innerHTML = error; });
+		i += 1;
+		console.log('i: ', i);
+	}
+	
+}
+	
 // -----------------------------------------------
 
 </script>
