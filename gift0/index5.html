@@ -37,6 +37,7 @@
 	<h2 id="chatbot_container_title_instruction" style="display:none;">Enter a question to the chatbot</h2>
     	<input class="inputClass" type="text" id="chatbot_container_text_input" placeholder="Enter a question to the chatbot" value="" style="display:none; text-align: left; width: 600px;">
     	<button class="buttonClass" id="run_yaml_process_onButton_click" type="button" style="display:none;">Submit</button>
+    	<button class="buttonClass_backend" id="notify_that_response_is_done" type="button" style="display:none;"></button>
     </div>
 	
     <!-- This is displayed when sidebar chatbot is selected: this should only appear when sidebar is selected -->
@@ -305,48 +306,33 @@ async function run_library() {
 // -----------------------------------------------
 
 // Step 1: Click on hidden button on page from the Backend, to launch the function print_result
-async function print_result() {
-	await GET_repo_file_info_RESTAPI()
-		.then(async function () { await print_response_to_frontend(); document.getElementById('response').innerHTML = ""; })
-		.catch(error => { document.getElementById("error").innerHTML = error; });
-}
 
+document.getElementById("notify_that_response_is_done").addEventListener("click", async () => {
+
+	await print_result()
+		.then(async function() {
+			// Step 3: Frontend = make the button [be found in the DOM or to be NOT hidden] to make the Backend detect that the Frontend is finished
+			 await setTimeout(function() { document.getElementById("notify_that_response_is_done").style.display = 'block'; }, 300);
+		})
+		.then(function() {
+			// Step 4: Frontend = continue to ensure that the button non-visible (style="display:none;")
+			document.getElementById("notify_that_response_is_done").style.display = 'none';
+		})
+});
 
 // -----------------------------------------------
 	
-async function GET_repo_file_info_RESTAPI() {
-
+async function print_result() {
+	
 	var repoOwner = "Codesolutions2";
 	var repoName = "quote_to_chatbot_gifts";
 	var foldername = "gift0"
 	
-	await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/${foldername}/contents`)
-		.then(res => res.json())
-		.then(data => {
-			// let regexp = new RegExp(`${desired_filename}`, 'g');
-			let regexp = new RegExp('response', 'g');
-			data.forEach(file => {
-			      if (file.type === 'file' && file.name.match(regexp)) {
-				return file.download_url;
-			      }
-			    });
-		})
-		.then(async function (file_download_url) { 
-			console.log("file_download_url: ", file_download_url); 
-			return await fetch('https://raw.githubusercontent.com/CodeSolutions2/quote_to_chatbot_gifts/main/gift0/response'); 
-		})
+	await fetch('https://raw.githubusercontent.com/CodeSolutions2/quote_to_chatbot_gifts/main/gift0/output_response')
 		.then(res => res.text())
 		.then(async function (text_out) { document.getElementById('response').innerHTML = text_out; })
-		.catch(error => { console.log(error); });
-
-}
-	
-// -----------------------------------------------
-
-
-async function print_response_to_frontend() {
-
-
+		.then(async function () { document.getElementById('response').innerHTML = ""; })
+		.catch(error => { document.getElementById("error").innerHTML = error; });
 }
 
 // -----------------------------------------------
