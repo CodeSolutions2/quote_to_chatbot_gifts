@@ -20,6 +20,8 @@ concurrency:
 jobs:
   backend_process_file:
     runs-on: ubuntu-latest
+    outputs:
+      model_response: ${{ steps.setVariable.outputs.myOutput }}
 
     permissions:
       contents: write
@@ -45,6 +47,10 @@ jobs:
           model_response=$(curl -X POST 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${{ secrets.API_KEY }}' -H 'Content-Type:application/json' -d '{"contents":[{"parts":[{"text":"'$INPUT_TEXT'"}]}]}');
           echo "model_response = $model_response"; 
           echo "$model_response" >> gift0/output_response;
+
+      - name: Set Variable
+        id: model_response
+        run: echo "::set-output name=myOutput::$model_response"
 
       - name: Commit and push changes
         run: |
@@ -77,7 +83,10 @@ jobs:
 
       - name: Load webpage using a non-graphical browser
         uses: actions/github-script@v6
+        env:
+          model_response: '${{ needs.backend_process_file.outputs.model_response }}'
         with:
+          result-encoding: string
           script: |
             const puppeteer = require('puppeteer');
             try {
@@ -90,6 +99,9 @@ jobs:
               await page.goto(URL);
 
               await page.evaluate(() => { document.querySelector('#notify_that_response_is_done').click(); });
+
+              // Output text to HTML element
+              await page.type('#response', process.env.model_response);
               
               await page.waitForSelector('#notify_that_response_is_done', {visible: true});
               
