@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - '**.txt'
+      - 'gift0/cb.txt'
 
 jobs:
   process_file:
