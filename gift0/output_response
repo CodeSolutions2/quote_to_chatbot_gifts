@@ -1,39 +1,7 @@
 {
-  "candidates": [
-    {
-      "content": {
-        "parts": [
-          {
-            "text": "It's impossible to say definitively what the \"shallowest sea\" is, as there are many factors to consider.  Here's why:\n\n* **What defines a sea?**  There's no strict scientific definition for what constitutes a \"sea\" versus a \"lake\" or a \"bay\". Some bodies of water called \"seas\" are connected to larger oceans, others are almost entirely enclosed.\n* **What does \"shallowest\" mean?** Do we mean the shallowest average depth, the shallowest point, or the shallowest depth of the seafloor at its edge?\n* **Varying depths:** Even within a single \"sea\", the depth can vary greatly.\n\nHowever, we can look at some contenders for the title of \"shallowest sea\":\n\n* **The Sea of Azov:**  This sea in the Black Sea basin is very shallow, with an average depth of only 7 meters (23 feet). \n* **The Baltic Sea:**  This sea in northern Europe has an average depth of 55 meters (180 feet), but its shallowest parts are significantly less than that.\n* **The Gulf of Mexico:**  This large gulf has an average depth of 1,500 meters (4,900 feet) but its shallowest parts near the coast are very shallow.\n\n**Ultimately, the \"shallowest sea\" depends on how you define \"sea\" and \"shallowest\".** \n"
-          }
-        ],
-        "role": "model"
-      },
-      "finishReason": "STOP",
-      "index": 0,
-      "safetyRatings": [
-        {
-          "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-          "probability": "NEGLIGIBLE"
-        },
-        {
-          "category": "HARM_CATEGORY_HATE_SPEECH",
-          "probability": "NEGLIGIBLE"
-        },
-        {
-          "category": "HARM_CATEGORY_HARASSMENT",
-          "probability": "NEGLIGIBLE"
-        },
-        {
-          "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-          "probability": "NEGLIGIBLE"
-        }
-      ]
-    }
-  ],
-  "usageMetadata": {
-    "promptTokenCount": 9,
-    "candidatesTokenCount": 304,
-    "totalTokenCount": 313
+  "error": {
+    "code": 400,
+    "message": "Invalid JSON payload received. Unexpected token.\n:[{\"parts\":[{\"text\":$INPUT_TEXT}]}]}\n                    ^",
+    "status": "INVALID_ARGUMENT"
   }
 }
