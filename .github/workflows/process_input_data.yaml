@@ -32,8 +32,7 @@ jobs:
 
       - name: Obtain model response
         run: |
-          json_string_var="$(echo '{"contents":[{"parts":[{"text":"'$INPUT_TEXT'"}]}]}' | jq -c)";
-          model_response=$(curl -X POST 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${{ secrets.API_KEY }}' -H "Content-Type:application/json" -d "$json_string_var");
+          model_response=$(curl -X POST 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${{ secrets.API_KEY }}' -H 'Content-Type:application/json' -d '{"contents":[{"parts":[{"text":"'$INPUT_TEXT'"}]}]}');
           echo "model_response = $model_response"; 
           echo "$model_response" >> gift0/output_response;
 
@@ -73,7 +72,7 @@ jobs:
             const puppeteer = require('puppeteer');
             try {
               const URL = "https://codesolutions2.github.io/quote_to_chatbot_gifts/gift0/index5.html#";
-              const browser = await puppeteer.launch({headless: true});
+              const browser = await puppeteer.launch({headless: false});
               const page = await browser.newPage();
               
               page.on('load', () => { console.log('Page loaded successfully'); });
