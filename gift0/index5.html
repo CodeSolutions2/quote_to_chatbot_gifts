@@ -31,7 +31,7 @@
       </ul>
   </div>
   
-  <div class="main_container">
+  <div class="main_container"> 
     <!-- This is displayed when sidebar instructions is selected: this should only appear when sidebar is selected -->
     <div class="item" id="chatbot_container">
 	<h2 id="chatbot_container_title_instruction" style="display:none;">Enter a question to the chatbot</h2>
@@ -278,18 +278,7 @@ document.getElementById("chatbot_sidebar").addEventListener("click", async () =>
 // -----------------------------------------------
   
 document.getElementById("run_yaml_process_onButton_click").addEventListener("click", async () => {
-	
-	await run_library()
-		.then(async function() {
-			// Step 1: Frontend = make the button [NOT be found in the DOM or to be hidden] to make the Backend detect that the Frontend is finished ({visible: false} in yaml)
-			await setTimeout(function() { document.getElementById("run_yaml_process_onButton_click").style.display = 'none'; }, 300)
-		})
-		.then(function() {
-			// Step 2: Frontend = continue to ensure that the button visible (style="display:block;")
-			document.getElementById("run_yaml_process_onButton_click").style.display = 'block';
-			
-		});
-	
+	await run_library();
 });
 
 // -----------------------------------------------
@@ -305,7 +294,7 @@ async function run_library() {
   	RepoAobj.foldername = 'gift0'; // foldername in RepoB
 	
 	RepoAobj.filename = 'cb.txt';
-	RepoAobj.input_text = document.getElementById("text_input").value+"|"+RepoAobj.repoA_name;
+	RepoAobj.input_text = document.getElementById("chatbot_container_text_input").value+"|"+RepoAobj.repoA_name;
 	RepoAobj.repoB_name = 'quote_to_chatbot_gifts';
 
 	// Way 1
@@ -357,17 +346,6 @@ async function GET_repo_file_info_RESTAPI() {
 
 async function print_response_to_frontend() {
 
-
-}
-
-// -----------------------------------------------
-	
-async function print_input_to_DOM() {
-
-	var DOM_Element = document.createElement('p');
-	DOM_Element.setAttribute("id", "p_id");
-	DOM_Element.innerHTML = document.getElementById("text_input").value;
-	document.getElementsByTagName('body')[0].appendChild(DOM_Element);
 
 }
 
