@@ -282,8 +282,9 @@ document.getElementById("chatbot_sidebar").addEventListener("click", async () =>
   
 document.getElementById("run_yaml_process_onButton_click").addEventListener("click", async () => {
 	await run_library()
-		.then(async function() { await automatic_print_result(); 
+		.then(async function() { var i = await automatic_print_result(); 
 					document.getElementById("progress_bar").style.display = "none"; 
+					if (i == 20) { document.getElementById('response').innerHTML = "Workflow in progress."; }
 		})
 			
 });
@@ -376,6 +377,7 @@ async function automatic_print_result() {
 			.catch(error => { document.getElementById("error").innerHTML = error; });
 		i += 1;
 		console.log('i: ', i);
+		return i;
 	}
 	
 }
