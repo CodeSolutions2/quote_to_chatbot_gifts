@@ -30,8 +30,8 @@ jobs:
 
       - name: Remove old output files
         run: |
-          if [ -f gift0/output_response ]; then
-            rm gift0/output_response;
+          if [ -f gift0/output_response.txt ]; then
+            rm gift0/output_response.txt;
           fi;
 
       - name: Obtain input text and model response
@@ -56,7 +56,7 @@ jobs:
           echo "MODEL_RESPONSE_TEXT=$(echo $model_response | jq '.candidates[0].content.parts[0].text')" >> "$GITHUB_ENV";
           # ---------------------------------------
           # Save model output to file
-          echo "$model_response_text" >> gift0/output_response;
+          echo "$model_response_text" >> gift0/output_response.txt;
 
       - name: Commit and push changes
         run: |
@@ -89,8 +89,8 @@ jobs:
 
       - name: Remove files
         run: |
-          if [ -f gift0/output_response ]; then
-            rm gift0/output_response;
+          if [ -f gift0/output_response.txt ]; then
+            rm gift0/output_response.txt;
           fi;
           if [ -f gift0/cb0.txt ]; then
             rm gift0/cb0.txt
