@@ -37,8 +37,6 @@
 	<h2 id="chatbot_container_title_instruction" style="display:none;">Enter a question to the chatbot</h2>
     	<input class="inputClass" type="text" id="chatbot_container_text_input" placeholder="Enter a question to the chatbot" value="" style="display:none; text-align: left; width: 600px;">
 	<button class="buttonClass" id="run_yaml_process_file_onButton_click" type="button" style="display:none;">Submit (response process with file)</button>
-	<br>  
-    	<button class="buttonClass" id="run_yaml_process_div_onButton_click" type="button" style="display:none;">Submit (response process with div)</button>
 	<br>
 	<progress id="progress_bar" max="100" value="0" style="display:none">0%</progress>
     </div>
@@ -267,7 +265,6 @@ document.getElementById("instructions_sidebar").addEventListener("click", async 
 	document.getElementById("chatbot_container_title_instruction").style.display = 'none';
 	document.getElementById("chatbot_container_text_input").style.display = 'none';
 	document.getElementById("run_yaml_process_file_onButton_click").style.display = 'none';
-	document.getElementById("run_yaml_process_div_onButton_click").style.display = 'none';
 
 	document.getElementById("instructions_container_title_instruction").style.display = 'block';
 	document.getElementById("instructions_container_paragraph").style.display = 'block';
@@ -279,7 +276,6 @@ document.getElementById("chatbot_sidebar").addEventListener("click", async () =>
 	document.getElementById("chatbot_container_title_instruction").style.display = 'block';
 	document.getElementById("chatbot_container_text_input").style.display = 'block';
 	document.getElementById("run_yaml_process_file_onButton_click").style.display = 'block';
-	document.getElementById("run_yaml_process_div_onButton_click").style.display = 'block';
 	
 	document.getElementById("instructions_container_title_instruction").style.display = 'none';
 	document.getElementById("instructions_container_paragraph").style.display = 'none';
@@ -305,23 +301,6 @@ document.getElementById("run_yaml_process_file_onButton_click").addEventListener
 			
 });
 
-// -----------------------------------------------
-
-document.getElementById("run_yaml_process_div_onButton_click").addEventListener("click", async () => {
-
-	var filename = "cb1.txt";
-	
-	await run_library(filename)
-		.then(async function() { 
-			// Way 1: Stop yaml script by making '#response' visible - problem is we do not know when the backend has sent the text to textContent - so need a way to check if there is text in textContent
-			await automatic_checking_for_text_in_div1();
-			
-			// Reset progress bar
-			document.getElementById("progress_bar").style.display = "none";
-		});
-			
-});
-	
 // -----------------------------------------------
 
 // Step 0: Create a file with the input query to launch the yaml (backend)
@@ -422,80 +401,6 @@ async function print_result(file_download_url) {
 
 
 	
-// -----------------------------------------------
-// Read response from div
-// -----------------------------------------------
-async function automatic_checking_for_text_in_div() {
-
-	// Wait for text to be written to div
-
-	// 1st time it writes to div response from the backend
-	
-	var flag = "run";
-	var i = 0;
-	
-	while (flag == "run" && i < 20) {
-		
-		if (document.getElementById('response').textContent == "") {
-			// Time to wait in between trying to read the div element
-			await new Promise(r => setTimeout(r, 10000)); 
-		} else {
-			// Stop the backend process and display result
-			document.getElementById("response").style.display = "block";
-			
-			// Stop the loop on the frontend
-			flag = "stop";
-		}
-		
-		i = i + 1;
-		console.log('i: ', i);
-
-		console.log('response: ', document.getElementById('response').textContent);
-
-		// Update progress bar
-		document.getElementById("progress_bar").value = (i/20)*100;
-	}
-}
-	
-// -----------------------------------------------
-
-async function automatic_checking_for_text_in_div1() {
-
-	// Wait for file creation
-	var flag = "run";
-	var i = 0;
-	
-	while (flag == "run" && i < 20) {
-		
-		const file_download_url = await GET_file_download_url();
-
-		if (file_download_url == 'No_file_found') {
-			// Time to wait in between trying to read the file
-			await new Promise(r => setTimeout(r, 7000)); 
-		} else {
-			// 1st time it writes to div response - Puppeteer should have inserted the text in the div response
-			const text = document.getElementById('response').textContent;
-			console.log('text: ', text);
-			
-			// Stop the backend process and display result
-			document.getElementById("response").style.display = "block";
-			
-			// Stop the loop on the frontend
-			flag = "stop";
-		}
-
-		// Update counter
-		i += 1;
-		console.log('i: ', i);
-		
-		// Update progress bar
-		document.getElementById("progress_bar").value = (i/20)*100;
-		
-	}
-}
-
-// -----------------------------------------------
-
 
 </script>
 </body>
