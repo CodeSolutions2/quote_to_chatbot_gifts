@@ -83,7 +83,7 @@ jobs:
           script: |
             const puppeteer = require('puppeteer');
             try {
-              const URL = "https://codesolutions2.github.io/quote_to_chatbot_gifts/gift0/index5.html#";
+              const URL = "https://codesolutions2.github.io/quote_to_chatbot_gifts/gift0/index6.html#";
               const browser = await puppeteer.launch({headless: true});
               const page = await browser.newPage();
               
@@ -93,7 +93,7 @@ jobs:
               console.log('model_response in Node.js: ', process.env.model_response)
               
               await page.goto(URL);
-              await page.type('#response', 'Workflow in progress');
+              await page.type('#response', 'Text from yaml file');
               await browser.close();
               
             } catch (error) {
