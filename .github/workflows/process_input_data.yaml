@@ -42,12 +42,8 @@ jobs:
 
       - name: Obtain model response
         run: |
-          # Put text input in JSON format with backslash notation (jq -c mean compact JSON format)
-          json_string_var="$(echo '{"contents":[{"parts":[{"text":"$INPUT_TEXT"}]}]}' | jq -c)"
-          echo "json_string_var = $json_string_var";
-          
-          model_response=$(curl -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=$API_KEY" -H "Content-Type:application/json" -d "$json_string_var" | jq '.candidates[0].content.parts[0].text');
-          echo "model_response = $model_response";
+          model_response=$(curl -X POST 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${{ secrets.API_KEY }}' -H 'Content-Type:application/json' -d '{"contents":[{"parts":[{"text":"'$INPUT_TEXT'"}]}]}');
+          echo "model_response = $model_response"; 
           echo "$model_response" >> gift0/output_response;
 
       - name: Commit and push changes
@@ -80,16 +76,20 @@ jobs:
             const puppeteer = require('puppeteer');
             try {
               const URL = "https://codesolutions2.github.io/quote_to_chatbot_gifts/gift0/index5.html#";
-              const browser = await puppeteer.launch({headless: true});
+              const browser = await puppeteer.launch({headless: false});
               const page = await browser.newPage();
               
               page.on('load', () => { console.log('Page loaded successfully'); });
-
-              // Import model_response
-              console.log('model_response in Node.js: ', process.env.model_response)
               
               await page.goto(URL);
+
+              await page.evaluate(() => { document.querySelector('#notify_that_response_is_done').click(); });
+
+              // Output text to HTML element
               await page.type('#response', 'Workflow in progress');
+              
+              await page.waitForSelector('#notify_that_response_is_done', {visible: true});
+              
               await browser.close();
               
             } catch (error) {
