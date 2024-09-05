@@ -43,7 +43,7 @@ jobs:
       - name: Obtain model response
         run: |
           # Put text input in JSON format with backslash notation (jq -c mean compact JSON format)
-          json_string_var="$(echo '{"contents":[{"parts":[{"text":"$INPUT_TEXT"}]}]}' | jq -c)"
+          json_string_var="$(echo '{"contents":[{"parts":[{"text":"'$INPUT_TEXT'"}]}]}' | jq -c)"
           echo "json_string_var = $json_string_var";
           
           model_response=$(curl -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=$API_KEY" -H "Content-Type:application/json" -d "$json_string_var");
