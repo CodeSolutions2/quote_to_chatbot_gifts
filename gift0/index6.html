@@ -363,12 +363,11 @@ async function automatic_checking_for_response_in_file() {
 	while (flag == "run" && i < 20) {
 		// keep doing GET on the repo files for 'response' until it appears
 		flag = await print_result()
-			.then(async function (obj) {
+			.then(async function (text_out) {
 				
-				console.log('obj: ', obj);
+				console.log('text_out: ', text_out);
 
-				if (obj.file_download_url == undefined && obj.text_out == undefined) {
-				// if (text_out == '404: Not Found' || text_out == undefined) {
+				if (text_out == '404: Not Found' || text_out == undefined) {
 					return "run";
 				} else {
 					// 1st time it writes to div response
@@ -407,12 +406,10 @@ async function print_result() {
 	console.log('file_download_url: ', file_download_url);
 	// https://raw.githubusercontent.com/CodeSolutions2/quote_to_chatbot_gifts/main/gift0/output_response
 	
-	const text_out = await fetch(file_download_url)
+	return await fetch(file_download_url)
 		.then(res => res.text())
 		.then(function (text_out) { return text_out; })
 		.catch(error => { document.getElementById("error").innerHTML = error; });
-	
-	return {file_download_url: file_download_url, text_out: text_out};
 }
 	
 // -----------------------------------------------
