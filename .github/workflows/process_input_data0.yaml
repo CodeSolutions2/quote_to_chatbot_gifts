@@ -73,7 +73,40 @@ jobs:
           git diff-index --quiet HEAD || git commit -m "add files" --allow-empty;
           git push;
 
-      - name: Clean up input and output file
+
+  clean_up_files:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      
+    steps:
+      - name: Wait for 120 seconds (2 mins)
+        run: sleep 120
+
+      - name: Re-pull the repository files
+        uses: actions/checkout@v4
+
+      - name: Remove files
         run: |
-          rm gift0/output_response;
-          rm gift0/cb0.txt;
+          if [ -f gift0/output_response ]; then
+            rm gift0/output_response;
+          fi;
+          if [ -f gift0/cb0.txt ]; then
+            rm gift0/cb0.txt
+          fi;
+         
+      - name: Commit and push changes
+        run: |
+          repoOwner=$(echo "${{ github.repository }}" | cut -d '/' -f 1);
+          repoOwnerEmail="j622amilah@gmail.com";
+          
+          git config --global user.email ${repoOwnerEmail};
+          git config --global user.name ${repoOwner};
+          git pull origin main;
+          git checkout main;
+          git branch --set-upstream-to origin/main;
+          git merge main --ff-only;
+          git add -A; 
+          git diff-index --quiet HEAD || git commit -m "add files" --allow-empty;
+          git push;
