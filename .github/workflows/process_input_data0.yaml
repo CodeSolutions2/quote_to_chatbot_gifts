@@ -72,3 +72,8 @@ jobs:
           git add -A; 
           git diff-index --quiet HEAD || git commit -m "add files" --allow-empty;
           git push;
+
+      - name: Clean up input and output file
+        run: |
+          rm gift0/output_response;
+          rm gift0/cb0.txt;
