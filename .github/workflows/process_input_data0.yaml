@@ -1,4 +1,4 @@
-name: Process input data on the Backend
+name: Process input data on the Backend (file)
 
 on:
   push:
