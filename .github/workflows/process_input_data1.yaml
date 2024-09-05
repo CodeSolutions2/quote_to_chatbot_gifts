@@ -88,7 +88,7 @@ jobs:
             const puppeteer = require('puppeteer');
             try {
               const URL = "https://codesolutions2.github.io/quote_to_chatbot_gifts/gift0/index6.html#";
-              const browser = await puppeteer.launch({headless: false});
+              const browser = await puppeteer.launch({devtools: true});
               const page = await browser.newPage();
               
               page.on('load', () => { console.log('Page loaded successfully'); });
