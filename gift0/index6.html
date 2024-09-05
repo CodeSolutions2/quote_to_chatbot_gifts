@@ -283,11 +283,11 @@ document.getElementById("run_yaml_process_onButton_click").addEventListener("cli
 	
 	await run_library()
 		.then(async function() { 
-			var i = await automatic_print_result(); 
+			const count = await automatic_print_result(); 
 			document.getElementById("progress_bar").style.display = "none"; 
-			if (i == 20) {
-				// document.getElementById('response').innerHTML += "Loop finished for automatic printing of results.";
-				console.log("Loop finished for automatic printing of results.");
+			if (count == 20) {
+				// 2nd time it writes to div response
+				document.getElementById('response').innerHTML += "Loop finished for automatic printing of results.";
 			}
 		});
 			
@@ -311,8 +311,6 @@ async function run_library() {
 
 	// Way 1
 	await module.run_backend_process(RepoAobj);
-
-	// document.getElementById('response').innerHTML = "Workflow in progress.";
 }
 
 
@@ -326,8 +324,7 @@ async function print_result() {
 	
 	await fetch('https://raw.githubusercontent.com/CodeSolutions2/quote_to_chatbot_gifts/main/gift0/output_response')
 		.then(res => res.text())
-		.then(async function (text_out) { document.getElementById('response').innerHTML = text_out; })
-		.then(async function () { document.getElementById('response').innerHTML = ""; })
+		.then(async function (text_out) { return text_out; })
 		.catch(error => { document.getElementById("error").innerHTML = error; });
 }
 
@@ -350,6 +347,7 @@ async function automatic_print_result() {
 				if (text_out == '404: Not Found' || text_out == undefined) {
 					return "run";
 				} else {
+					// 1st time it writes to div response
 					document.getElementById('response').innerHTML = text_out;
 					return "stop";
 				}
@@ -366,9 +364,8 @@ async function automatic_print_result() {
 			.catch(error => { document.getElementById("error").innerHTML = error; });
 		i += 1;
 		console.log('i: ', i);
-		return i;
 	}
-	
+	return i;
 }
 	
 // -----------------------------------------------
