@@ -36,9 +36,9 @@ jobs:
 
       - name: Create input text
         run: |
-          INPUT_TEXT="$(cat gift0/cb.txt | cut -d '|' -f 1)"; 
+          INPUT_TEXT="$(cat gift0/cb1.txt | cut -d '|' -f 1)"; 
           echo "INPUT_TEXT = $INPUT_TEXT"; 
-          REPO_NAME="$(cat gift0/cb.txt | cut -d '|' -f 2)"
+          REPO_NAME="$(cat gift0/cb1.txt | cut -d '|' -f 2)"
 
       - name: Obtain model response
         run: |
@@ -46,9 +46,13 @@ jobs:
           json_string_var="$(echo '{"contents":[{"parts":[{"text":"$INPUT_TEXT"}]}]}' | jq -c)"
           echo "json_string_var = $json_string_var";
           
-          model_response=$(curl -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=$API_KEY" -H "Content-Type:application/json" -d "$json_string_var" | jq '.candidates[0].content.parts[0].text');
+          model_response=$(curl -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=$API_KEY" -H "Content-Type:application/json" -d "$json_string_var");
           echo "model_response = $model_response";
-          echo "$model_response" >> gift0/output_response;
+
+          model_response_text=$(echo $model_response | jq ".candidates[0].content.parts[0].text");
+          echo "model_response_text = $model_response_text";
+          
+          echo "$model_response_text" >> gift0/output_response;
 
       - name: Commit and push changes
         run: |
