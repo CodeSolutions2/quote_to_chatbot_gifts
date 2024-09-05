@@ -295,6 +295,9 @@ document.getElementById("run_yaml_process_file_onButton_click").addEventListener
 		.then(async function() { 
 			// Way 0: perform a GET REST API in a loop
 			await automatic_checking_for_response_in_file(); 
+
+			// Display result
+			document.getElementById("response").style.display = "block";
 			
 			// Reset progress bar
 			document.getElementById("progress_bar").style.display = "none";
@@ -439,7 +442,7 @@ async function automatic_checking_for_text_in_div() {
 			// Stop the loop on the frontend
 			flag = "stop";
 
-			// Stop the backend process
+			// Stop the backend process and display result
 			document.getElementById("response").style.display = "block";
 		}
 		
