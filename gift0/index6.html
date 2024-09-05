@@ -326,6 +326,8 @@ async function automatic_checking_for_text_in_div() {
 		i = i + 1;
 		console.log('i: ', i);
 
+		console.log('response: ', document.getElementById('response').textContent);
+
 		// Update progress bar
 		document.getElementById("progress_bar").value = (i/20)*100;
 	}
