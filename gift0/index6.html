@@ -369,8 +369,9 @@ async function automatic_checking_for_response_in_file() {
 			await new Promise(r => setTimeout(r, 10000)); 
 		} else {
 			// 1st time it writes to div response
-			document.getElementById('response').innerHTML = await print_result(file_download_url);
-			
+			const text = await print_result(file_download_url);
+			console.log('text: ', text);
+			document.getElementById('response').innerHTML = text;
 			flag = "stop";
 		}
 
@@ -407,7 +408,7 @@ async function print_result(file_download_url) {
 
 	return await fetch(file_download_url)
 		.then(res => res.text())
-		.then(function (text_out) { return text_out; })
+		.then(function (text_out) { console.log('text_out: ', text_out); return text_out; })
 		.catch(error => { document.getElementById("error").innerHTML = error; });
 }
 	
