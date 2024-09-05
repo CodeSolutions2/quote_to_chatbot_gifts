@@ -280,15 +280,16 @@ document.getElementById("chatbot_sidebar").addEventListener("click", async () =>
 // -----------------------------------------------
   
 document.getElementById("run_yaml_process_onButton_click").addEventListener("click", async () => {
-  
-  await run_library()
-      .then(async function() { 
-      var i = await automatic_print_result(); 
-					document.getElementById("progress_bar").style.display = "none"; 
-					if (i == 20) { 
-            document.getElementById('response').innerHTML += "Loop finished for automatic printing of results."; 
-          }
-		})
+	
+	await run_library()
+		.then(async function() { 
+			var i = await automatic_print_result(); 
+			document.getElementById("progress_bar").style.display = "none"; 
+			if (i == 20) {
+				// document.getElementById('response').innerHTML += "Loop finished for automatic printing of results.";
+				console.log("Loop finished for automatic printing of results.");
+			}
+		});
 			
 });
 
@@ -311,7 +312,7 @@ async function run_library() {
 	// Way 1
 	await module.run_backend_process(RepoAobj);
 
-	document.getElementById('response').innerHTML = "Workflow in progress.";
+	// document.getElementById('response').innerHTML = "Workflow in progress.";
 }
 
 
