@@ -310,7 +310,7 @@ async function run_library() {
   
   	RepoAobj.repoOwner = 'CodeSolutions2';
 	RepoAobj.repoA_name = 'quote_to_chatbot_gifts';
-  	RepoAobj.foldername = 'gift0'; // foldername in RepoB
+  	RepoAobj.foldername = 'gift0';
 	
 	RepoAobj.filename = 'cb1.txt';
 	RepoAobj.input_text = document.getElementById("chatbot_container_text_input").value+"|"+RepoAobj.repoA_name;
@@ -325,13 +325,9 @@ async function run_library() {
 	
 async function print_result() {
 	
-	var repoOwner = "Codesolutions2";
-	var repoName = "quote_to_chatbot_gifts";
-	var foldername = "gift0"
-	
-	await fetch('https://raw.githubusercontent.com/CodeSolutions2/quote_to_chatbot_gifts/main/gift0/output_response')
+	await fetch("https://raw.githubusercontent.com/CodeSolutions2/quote_to_chatbot_gifts/main/gift0/output_response")
 		.then(res => res.text())
-		.then(async function (text_out) { return text_out; })
+		.then(function (text_out) { return text_out; })
 		.catch(error => { document.getElementById("error").innerHTML = error; });
 }
 
@@ -381,13 +377,13 @@ async function get_filedownloadurl() {
 	
 	var desired_filename = 'output_response';
 	var desired_foldername = 'gift0';
-  	var repoB_name = 'quote_to_chatbot_gifts';
+  	var repoName = 'quote_to_chatbot_gifts';
 	var repoOwner = 'CodeSolutions2';
 
-	var objOut = await module1.GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername, repoB_name, repoOwner);
-
-	console.log('objOut: ', objOut);
-	// document.getElementById('notification').innerHTML +=
+	var objOut = await module1.GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername, repoName, repoOwner);
+	
+	const file_download_url = objOut.file_download_url[0];
+	console.log('file_download_url: ', file_download_url);
 }
 
 	
