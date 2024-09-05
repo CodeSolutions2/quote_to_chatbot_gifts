@@ -471,7 +471,7 @@ async function automatic_checking_for_text_in_div1() {
 
 		if (file_download_url == 'No_file_found') {
 			// Time to wait in between trying to read the file
-			await new Promise(r => setTimeout(r, 10000)); 
+			await new Promise(r => setTimeout(r, 7000)); 
 		} else {
 			// 1st time it writes to div response - Puppeteer should have inserted the text in the div response
 			const text = document.getElementById('response').textContent;
