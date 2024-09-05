@@ -77,7 +77,7 @@ jobs:
       - name: Load webpage using a non-graphical browser
         uses: actions/github-script@v6
         env:
-          model_response: '$model_response'
+          model_response: $model_response_text
         with:
           result-encoding: string
           script: |
