@@ -50,7 +50,7 @@
     <!-- This is displayed regardless of the sidebar -->
     <div id="notification"></div>
     <div id="error"></div>
-    <div id="response"></div>
+    <div id="response" style="display:none;"></div>
 </div>
 
 	
@@ -287,16 +287,50 @@ document.getElementById("run_yaml_process_onButton_click").addEventListener("cli
 	
 	await run_library()
 		.then(async function() { 
-			const count = await automatic_print_result(); 
-			document.getElementById("progress_bar").style.display = "none"; 
-			if (count == 20) {
-				// 2nd time it writes to div response
-				document.getElementById('response').innerHTML += "Loop finished for automatic printing of results.";
-			}
+			// Way 0: perform a GET REST API in a loop
+			// const count = await automatic_checking_for_response_in_file(); 
+
+			// Way 1: Stop yaml script by making '#response' visible - problem is we do not know when the backend has sent the text to textContent - so need a way to check if there is text in textContent
+			const count = await automatic_checking_for_text_in_div();
+			
+			// Reset progress bar
+			document.getElementById("progress_bar").style.display = "none";
 		});
 			
 });
 
+// -----------------------------------------------
+
+async function automatic_checking_for_text_in_div() {
+
+	// Wait for text to be written to div
+
+	// 1st time it writes to div response from the backend
+	
+	var flag = "run";
+	var i = 0;
+	
+	while (flag == "run" && i < 20) {
+		
+		if (document.getElementById('response').textContent == "") {
+			// Time to wait in between trying to read the div element
+			await new Promise(r => setTimeout(r, 10000)); 
+		} else {
+			// Stop the loop on the frontend
+			flag = "stop";
+
+			// Stop the backend process
+			document.getElementById("response").style.display = "block";
+		}
+		
+		i = i + 1;
+
+		// Update progress bar
+		document.getElementById("progress_bar").value = (i/20)*100;
+	}
+	return i;
+}
+	
 // -----------------------------------------------
 
 // Step 0: Create a file with the input query to launch the yaml (backend)
@@ -315,47 +349,31 @@ async function run_library() {
 
 	// Way 1
 	await module.run_backend_process(RepoAobj);
-}
 
+	// Initialize output
+	document.getElementById('response').textContent = "";
 
-// -----------------------------------------------
-	
-async function print_result() {
-
-	var desired_filename = 'output_response';
-	var desired_foldername = 'gift0';
-  	var repoName = 'quote_to_chatbot_gifts';
-	var repoOwner = 'CodeSolutions2';
-
-	var objOut = await module1.GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername, repoName, repoOwner);
-	
-	const file_download_url = objOut.file_download_url[0];
-	console.log('file_download_url: ', file_download_url);
-	// https://raw.githubusercontent.com/CodeSolutions2/quote_to_chatbot_gifts/main/gift0/output_response
-	
-	await fetch(file_download_url)
-		.then(res => res.text())
-		.then(function (text_out) { return text_out; })
-		.catch(error => { document.getElementById("error").innerHTML = error; });
+	// Initialize progress bar
+	document.getElementById("progress_bar").style.display = "block";
 }
 
 // -----------------------------------------------
 
-async function automatic_print_result() {
+async function automatic_checking_for_response_in_file() {
 
 	// Wait for file creation
 	var flag = "run";
 	var i = 0;
-
-	document.getElementById("progress_bar").style.display = "block";
 	
 	while (flag == "run" && i < 20) {
 		// keep doing GET on the repo files for 'response' until it appears
 		flag = await print_result()
-			.then(async function (text_out) {
-				console.log('text_out: ', text_out);
+			.then(async function (obj) {
 				
-				if (text_out == '404: Not Found' || text_out == undefined) {
+				console.log('obj: ', obj);
+
+				if (obj.file_download_url == undefined && obj.text_out == undefined) {
+				// if (text_out == '404: Not Found' || text_out == undefined) {
 					return "run";
 				} else {
 					// 1st time it writes to div response
@@ -377,6 +395,29 @@ async function automatic_print_result() {
 		console.log('i: ', i);
 	}
 	return i;
+}
+
+// -----------------------------------------------
+	
+async function print_result() {
+
+	var desired_filename = 'output_response';
+	var desired_foldername = 'gift0';
+  	var repoName = 'quote_to_chatbot_gifts';
+	var repoOwner = 'CodeSolutions2';
+
+	var objOut = await module1.GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername, repoName, repoOwner);
+	
+	const file_download_url = objOut.file_download_url[0];
+	console.log('file_download_url: ', file_download_url);
+	// https://raw.githubusercontent.com/CodeSolutions2/quote_to_chatbot_gifts/main/gift0/output_response
+	
+	const text_out = await fetch(file_download_url)
+		.then(res => res.text())
+		.then(function (text_out) { return text_out; })
+		.catch(error => { document.getElementById("error").innerHTML = error; });
+	
+	return {file_download_url: file_download_url, text_out: text_out};
 }
 	
 // -----------------------------------------------
