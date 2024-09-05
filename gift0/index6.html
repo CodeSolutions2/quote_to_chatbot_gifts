@@ -45,6 +45,7 @@
     <div class="item" id="instructions_container">
 	<h2 id="instructions_container_title_instruction" style="display:none;">Instructions for how to use Quote-to-chatbot gifts</h2>
 	<p id="instructions_container_paragraph" style="display:none;"></p>
+	<button id="get_filedownloadurl" onclick="get_filedownloadurl()" type="button" style="display:none;">get_filedownloadurl</button>
     </div>
     
     <!-- This is displayed regardless of the sidebar -->
@@ -242,6 +243,7 @@ body{
 <script type="module" redirect="follow" mode="no-cors">
 import { run_backend_process } from "https://codesolutions2.github.io/quote_to_chatbot_gifts/library_to_run_GitHub_Actions.js";
 module.run_backend_process = run_backend_process;
+module1.GET_fileDownloadUrl_and_sha = GET_fileDownloadUrl_and_sha;
 </script>
 	
 <script>
@@ -250,6 +252,7 @@ module.run_backend_process = run_backend_process;
 	
 // Way 1
 const module = {};
+const module1 = {};
 	
 // -----------------------------------------------
 	
@@ -265,6 +268,8 @@ document.getElementById("instructions_sidebar").addEventListener("click", async 
 	document.getElementById("run_yaml_process_onButton_click").style.display = 'none';
 
 	document.getElementById("instructions_container_title_instruction").style.display = 'block';
+	document.getElementById("instructions_container_paragraph").style.display = 'block';
+	document.getElementById("get_filedownloadurl").style.display = 'block';
 });
 	
 // -----------------------------------------------
@@ -275,6 +280,8 @@ document.getElementById("chatbot_sidebar").addEventListener("click", async () =>
 	document.getElementById("run_yaml_process_onButton_click").style.display = 'block';
 
 	document.getElementById("instructions_container_title_instruction").style.display = 'none';
+	document.getElementById("instructions_container_paragraph").style.display = 'none';
+	document.getElementById("get_filedownloadurl").style.display = 'none';
 });
 
 // -----------------------------------------------
@@ -369,6 +376,21 @@ async function automatic_print_result() {
 }
 	
 // -----------------------------------------------
+
+async function get_filedownloadurl() {
+	
+	var desired_filename = 'output_response';
+	var desired_foldername = 'gift0';
+  	var repoB_name = 'quote_to_chatbot_gifts';
+	var repoOwner = 'CodeSolutions2';
+
+	var objOut = await module1.GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername, repoB_name, repoOwner);
+
+	console.log('objOut: ', objOut);
+	// document.getElementById('notification').innerHTML +=
+}
+
+	
 
 </script>
 </body>
