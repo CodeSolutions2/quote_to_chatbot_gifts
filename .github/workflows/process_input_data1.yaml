@@ -45,12 +45,20 @@ jobs:
           # Put text input in JSON format with backslash notation (jq -c mean compact JSON format)
           json_string_var="$(echo '{"contents":[{"parts":[{"text":"'$INPUT_TEXT'"}]}]}' | jq -c)"
           echo "json_string_var = $json_string_var";
+
+          json_string_var1="$(echo '{"contents":[{"parts":[{"text":"$INPUT_TEXT"}]}]}' | jq -c)"
+          echo "json_string_var1 = $json_string_var1";
+
+          json_string_var2="$(echo '{"contents":[{"parts":[{"text":"${INPUT_TEXT}"}]}]}' | jq -c)"
+          echo "json_string_var2 = $json_string_var2";
           
           model_response=$(curl -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${{ secrets.API_KEY }}" -H "Content-Type:application/json" -d "$json_string_var");
           echo "model_response = $model_response";
 
           model_response_text=$(echo $model_response | jq ".candidates[0].content.parts[0].text");
           echo "model_response_text = $model_response_text";
+
+          echo "model_response_text=$(echo $model_response | jq '.candidates[0].content.parts[0].text')" >> "$GITHUB_ENV";
           
           echo "$model_response_text" >> gift0/output_response;
 
@@ -77,7 +85,7 @@ jobs:
       - name: Load webpage using a non-graphical browser
         uses: actions/github-script@v6
         env:
-          model_response: $model_response_text
+          model_response_text: '${{ env.INPUT_TEXT }}'
         with:
           result-encoding: string
           script: |
@@ -90,7 +98,7 @@ jobs:
               page.on('load', () => { console.log('Page loaded successfully'); });
 
               // Import model_response
-              console.log('model_response in Node.js: ', process.env.model_response)
+              console.log('model_response_text in Node.js: ', process.env.model_response_text)
               
               await page.goto(URL);
               await page.type('#response', 'Text from yaml file');
