@@ -294,7 +294,7 @@ document.getElementById("run_yaml_process_file_onButton_click").addEventListener
 	await run_library(filename)
 		.then(async function() { 
 			// Way 0: perform a GET REST API in a loop
-			const count = await automatic_checking_for_response_in_file(); 
+			await automatic_checking_for_response_in_file(); 
 			
 			// Reset progress bar
 			document.getElementById("progress_bar").style.display = "none";
@@ -311,7 +311,7 @@ document.getElementById("run_yaml_process_div_onButton_click").addEventListener(
 	await run_library(filename)
 		.then(async function() { 
 			// Way 1: Stop yaml script by making '#response' visible - problem is we do not know when the backend has sent the text to textContent - so need a way to check if there is text in textContent
-			const count = await automatic_checking_for_text_in_div();
+			await automatic_checking_for_text_in_div();
 			
 			// Reset progress bar
 			document.getElementById("progress_bar").style.display = "none";
@@ -361,39 +361,32 @@ async function automatic_checking_for_response_in_file() {
 	var i = 0;
 	
 	while (flag == "run" && i < 20) {
-		// keep doing GET on the repo files for 'response' until it appears
-		flag = await print_result()
-			.then(async function (text_out) {
-				
-				console.log('text_out: ', text_out);
+		
+		const file_download_url = await GET_file_download_url();
 
-				if (text_out == '404: Not Found' || text_out == undefined) {
-					return "run";
-				} else {
-					// 1st time it writes to div response
-					document.getElementById('response').innerHTML = text_out;
-					return "stop";
-				}
-			})
-			.then(async function(flag) { 
-				// Time to wait in between trying to read the file
-				await new Promise(r => setTimeout(r, 10000)); 
+		if (file_download_url == 'No_file_found') {
+			// Time to wait in between trying to read the file
+			await new Promise(r => setTimeout(r, 10000)); 
+		} else {
+			// 1st time it writes to div response
+			document.getElementById('response').innerHTML = await print_result(file_download_url);
+			
+			flag = "stop";
+		}
 
-				// Update progress bar
-				document.getElementById("progress_bar").value = (i/20)*100;
-				
-				return flag; 
-			})
-			.catch(error => { document.getElementById("error").innerHTML = error; });
+		// Update counter
 		i += 1;
 		console.log('i: ', i);
+		
+		// Update progress bar
+		document.getElementById("progress_bar").value = (i/20)*100;
+		
 	}
-	return i;
 }
 
 // -----------------------------------------------
-	
-async function print_result() {
+
+async function GET_file_download_url() {
 
 	var desired_filename = 'output_response';
 	var desired_foldername = 'gift0';
@@ -405,7 +398,13 @@ async function print_result() {
 	const file_download_url = objOut.file_download_url[0];
 	console.log('file_download_url: ', file_download_url);
 	// https://raw.githubusercontent.com/CodeSolutions2/quote_to_chatbot_gifts/main/gift0/output_response
+	return file_download_url;
+}
 	
+// -----------------------------------------------
+
+async function print_result(file_download_url) {
+
 	return await fetch(file_download_url)
 		.then(res => res.text())
 		.then(function (text_out) { return text_out; })
@@ -451,7 +450,6 @@ async function automatic_checking_for_text_in_div() {
 		// Update progress bar
 		document.getElementById("progress_bar").value = (i/20)*100;
 	}
-	return i;
 }
 	
 // -----------------------------------------------
