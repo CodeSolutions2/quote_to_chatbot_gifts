@@ -87,15 +87,16 @@ jobs:
           script: |
             const puppeteer = require('puppeteer');
             try {
-              const URL = "https://codesolutions2.github.io/quote_to_chatbot_gifts/gift0/index6.html#";
-              const browser = await puppeteer.launch({devtools: true});
-              const page = await browser.newPage();
-              
-              page.on('load', () => { console.log('Page loaded successfully'); });
 
               // Import model_response
               console.log('MODEL_RESPONSE_TEXT in Node.js: ', process.env.MODEL_RESPONSE_TEXT)
               
+              const URL = "https://codesolutions2.github.io/quote_to_chatbot_gifts/gift0/index6.html#";
+              const browser = await puppeteer.launch({devtools: true, headless: true});
+              const page = await browser.newPage();
+              
+              page.on('load', () => { console.log('Page loaded successfully'); });
+
               await page.goto(URL);
 
               // Print text at a specific location
