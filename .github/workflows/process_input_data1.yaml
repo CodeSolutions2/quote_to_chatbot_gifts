@@ -34,32 +34,28 @@ jobs:
             rm gift0/output_response;
           fi;
 
-      - name: Create input text
+      - name: Obtain input text and model response
         run: |
           INPUT_TEXT="$(cat gift0/cb1.txt | cut -d '|' -f 1)"; 
           echo "INPUT_TEXT = $INPUT_TEXT"; 
           REPO_NAME="$(cat gift0/cb1.txt | cut -d '|' -f 2)"
-
-      - name: Obtain model response
-        run: |
+          # ---------------------------------------
           # Put text input in JSON format with backslash notation (jq -c mean compact JSON format)
           json_string_var="$(echo '{"contents":[{"parts":[{"text":"'$INPUT_TEXT'"}]}]}' | jq -c)"
           echo "json_string_var = $json_string_var";
-
-          json_string_var1="$(echo '{"contents":[{"parts":[{"text":"$INPUT_TEXT"}]}]}' | jq -c)"
-          echo "json_string_var1 = $json_string_var1";
-
-          json_string_var2="$(echo '{"contents":[{"parts":[{"text":"${INPUT_TEXT}"}]}]}' | jq -c)"
-          echo "json_string_var2 = $json_string_var2";
-          
+          # ---------------------------------------
+          # Obtain model response in JSON
           model_response=$(curl -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${{ secrets.API_KEY }}" -H "Content-Type:application/json" -d "$json_string_var");
           echo "model_response = $model_response";
-
+          # ---------------------------------------
+          # Extract text from JSON response
           model_response_text=$(echo $model_response | jq ".candidates[0].content.parts[0].text");
           echo "model_response_text = $model_response_text";
-
-          echo "model_response_text=$(echo $model_response | jq '.candidates[0].content.parts[0].text')" >> "$GITHUB_ENV";
-          
+          # ---------------------------------------
+          # Save model output to GitHub environmental variables
+          echo "MODEL_RESPONSE_TEXT=$(echo $model_response | jq '.candidates[0].content.parts[0].text')" >> "$GITHUB_ENV";
+          # ---------------------------------------
+          # Save model output to file
           echo "$model_response_text" >> gift0/output_response;
 
       - name: Commit and push changes
@@ -85,23 +81,29 @@ jobs:
       - name: Load webpage using a non-graphical browser
         uses: actions/github-script@v6
         env:
-          model_response_text: '${{ env.INPUT_TEXT }}'
+          MODEL_RESPONSE_TEXT: '${{ env.MODEL_RESPONSE_TEXT }}'
         with:
           result-encoding: string
           script: |
             const puppeteer = require('puppeteer');
             try {
               const URL = "https://codesolutions2.github.io/quote_to_chatbot_gifts/gift0/index6.html#";
-              const browser = await puppeteer.launch({headless: true});
+              const browser = await puppeteer.launch({headless: false});
               const page = await browser.newPage();
               
               page.on('load', () => { console.log('Page loaded successfully'); });
 
               // Import model_response
-              console.log('model_response_text in Node.js: ', process.env.model_response_text)
+              console.log('MODEL_RESPONSE_TEXT in Node.js: ', process.env.MODEL_RESPONSE_TEXT)
               
               await page.goto(URL);
-              await page.type('#response', 'Text from yaml file');
+
+              // Print text at a specific location
+              await page.evaluate(() => { document.querySelector('#response').textContent = 'Text from yaml file'; });
+
+              // So maybe, use this to end the process by making div visible on the page 
+              await page.waitForSelector('#response', {visible: true});
+              
               await browser.close();
               
             } catch (error) {
