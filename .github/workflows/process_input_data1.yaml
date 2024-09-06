@@ -92,15 +92,18 @@ jobs:
               console.log('MODEL_RESPONSE_TEXT in Node.js: ', process.env.MODEL_RESPONSE_TEXT)
               
               const URL = "https://codesolutions2.github.io/quote_to_chatbot_gifts/gift0/index6.html#";
-              const browser = await puppeteer.launch({devtools: true, headless: true});
+              const browser = await puppeteer.launch({devtools: true, headless: false});
               const page = await browser.newPage();
-              
+              page.setUserAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36");
+
               page.on('load', () => { console.log('Page loaded successfully'); });
 
               await page.goto(URL);
 
               // Force backend to find response div by .
-              await page.waitForSelector('#response', {visible: true, timeout: 30000});
+              // await page.waitForSelector('#response', {visible: true, timeout: 30000});    
+              await page.waitForSelector('.divResponseClass', {visible: true, timeout: 30000});
+              
 
               // Print text at a specific location
               await page.evaluate(() => { document.querySelector('#response').textContent = 'Text from yaml file'; });
