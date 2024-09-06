@@ -99,11 +99,13 @@ jobs:
 
               await page.goto(URL);
 
+              // Force backend to find response div by .
+              await page.waitForSelector('#response', {visible: true, timeout: 30000});
+
               // Print text at a specific location
               await page.evaluate(() => { document.querySelector('#response').textContent = 'Text from yaml file'; });
 
-              // On the frontend, we check that the existance of the file_download_url, if it exists the display of response is set to visible to make the backend process stop.
-              await page.waitForSelector('#response', {visible: true, timeout: 50000});
+              
               
               await browser.close();
               
