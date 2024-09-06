@@ -425,73 +425,18 @@ async function print_result(file_download_url) {
 // -----------------------------------------------
 // Read response from div
 // -----------------------------------------------
-async function automatic_checking_for_text_in_div() {
-
-	// Wait for text to be written to div
-
-	// 1st time it writes to div response from the backend
-	
-	var flag = "run";
-	var i = 0;
-	
-	while (flag == "run" && i < 20) {
-		
-		if (document.getElementById('response').textContent == "") {
-			// Time to wait in between trying to read the div element
-			await new Promise(r => setTimeout(r, 10000)); 
-		} else {
-			// Stop the backend process and display result
-			document.getElementById("response").style.display = "block";
-			
-			// Stop the loop on the frontend
-			flag = "stop";
-		}
-		
-		i = i + 1;
-		console.log('i: ', i);
-
-		console.log('response: ', document.getElementById('response').textContent);
-
-		// Update progress bar
-		document.getElementById("progress_bar").value = (i/20)*100;
-	}
-}
-	
-// -----------------------------------------------
-
 async function automatic_checking_for_text_in_div1() {
 
-	// Wait for file creation
-	var flag = "run";
-	var i = 0;
+	// Make it visible
+	document.getElementById("response").style.display = "block";
+
+	// Time to wait in between trying to read the file
+	await new Promise(r => setTimeout(r, 7000)); 
+
+	// 1st time it writes to div response - Puppeteer should have inserted the text in the div response
+	const text = document.getElementById('response').textContent;
+	console.log('text: ', text);
 	
-	while (flag == "run" && i < 20) {
-		
-		const file_download_url = await GET_file_download_url();
-
-		if (file_download_url == 'No_file_found') {
-			// Time to wait in between trying to read the file
-			await new Promise(r => setTimeout(r, 7000)); 
-		} else {
-			// 1st time it writes to div response - Puppeteer should have inserted the text in the div response
-			const text = document.getElementById('response').textContent;
-			console.log('text: ', text);
-			
-			// Stop the backend process and display result
-			document.getElementById("response").style.display = "block";
-			
-			// Stop the loop on the frontend
-			flag = "stop";
-		}
-
-		// Update counter
-		i += 1;
-		console.log('i: ', i);
-		
-		// Update progress bar
-		document.getElementById("progress_bar").value = (i/20)*100;
-		
-	}
 }
 
 // -----------------------------------------------
