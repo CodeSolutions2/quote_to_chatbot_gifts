@@ -1,10 +1,11 @@
 name: automatically reset (salt, encrypt) GitHub key for Frontend file
 
+
+
 on:
-  schedule:
-    - cron: '1 0,3,6,7,11,12,15,19,18,23 * * *'
-
-
+  push:
+    branches:
+      - main
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency: 
