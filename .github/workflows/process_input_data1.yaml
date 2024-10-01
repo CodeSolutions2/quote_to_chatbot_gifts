@@ -52,7 +52,7 @@ jobs:
           # REPO_NAME="$(cat src/cb0.txt | cut -d '|' -f 4-5)"
           # echo "REPO_NAME = $REPO_NAME";
           # ---------------------------------------
-          if [ $model_type -eq "OPENAI_MODEL" ]; then
+          if [ $model_type = "OPENAI_MODEL" ]; then
             json_string_var="$(echo '{"model":"gpt-3.5-turbo", "messages":[{"role":"system", "content":"You are a helpful assistant"}, {"role":"user", "content":"'$PROMPT'"}, {"role":"assistant", "content":"Respond concisely"}], "temperature":0}' | jq -c)"; 
             echo "json_string_var = $json_string_var";
             # ---------------------------------------
@@ -66,7 +66,7 @@ jobs:
             # Save model output to GitHub environmental variables
             echo "MODEL_RESPONSE_TEXT=$(echo $model_response_text)" >> "$GITHUB_ENV";
             # ---------------------------------------
-          elif [ $model_type -eq "GEMINI_MODEL" ]; then
+          elif [ $model_type = "GEMINI_MODEL" ]; then
             # Put text input in JSON format with backslash notation (jq -c mean compact JSON format)
             json_string_var="$(echo '{"contents":[{"parts":[{"text":"'$PROMPT'"}]}]}' | jq -c)"
             echo "json_string_var = $json_string_var";
