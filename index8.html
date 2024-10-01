@@ -44,7 +44,21 @@
     <!-- This is displayed when sidebar chatbot is selected: this should only appear when sidebar is selected -->
     <div class="item" id="instructions_container">
 	<h2 id="instructions_container_title_instruction" style="display:none;">Instructions for how to use Quote-to-chatbot gifts</h2>
-	<p id="instructions_container_paragraph" style="display:none;"></p>
+	<p id="instructions_container_paragraph" style="display:none;">Welcome to this "Walk-up-app" where your data is used to make agents similar to the quotes/text content you enter. Please complete the following information: [0] Enter your Google Gemini or OpenAI KEY, [1] Enter quotes/text content in the textarea that you wish to use to train the chatbot. For example, quotes of someone will train the chatbot to have the persona of someone who would say the quotes. [2] Click on the "Chatbot" sidebar and start talking with your "Quote programmed chatbot"!</p>
+
+	<h3 id="enter_key" style="display:none">[0] Enter your Google Gemini or OpenAI KEY</h3>
+	    <label for="select_dropdown_option_label" style="display:none">Select a drop down option:</label>
+<select name="dropdown_options" id="dropdown_options" style="display:none">
+  <option value="---">Select an option</option>
+  <option value="OPENAI_MODEL">Use OpenAI model</option>
+  <option value="GEMINI_MODEL">Use Gemini model</option>
+</select>
+	<input id="OPENAI_API_KEY" type="text" value="" placeholder="OPENAI_API_KEY" rows="10" cols="100" style="display:none; text-align: left; width: 150px;">
+	<input id="GEMINI_API_KEY" type="text" value="" placeholder="GEMINI_API_KEY" rows="10" cols="100" style="display:none; text-align: left; width: 150px;">
+
+	<h3>[1] Enter quotes/text content in the textarea that you wish to use to train the chatbot.</h3>
+	<textarea id="input_text" wrap="soft" rows="10" cols="100" placeholder="input text" style="display:none; text-align: left; width: 600px; height: 600px;"></textarea>
+	
     </div>
     
     <!-- This is displayed regardless of the sidebar -->
@@ -254,6 +268,7 @@ const module1 = {};
 	
 window.addEventListener('beforeunload', async function() {
 	window.location.href = window.location.href + '?nocache=' + new Date().getTime();
+	document.getElementById("dropdown_options").selectedIndex = 0;
 });
 
 // -----------------------------------------------
@@ -279,7 +294,30 @@ document.getElementById("chatbot_sidebar").addEventListener("click", async () =>
 });
 
 // -----------------------------------------------
-  
+
+async function processEvent_dropdown_options(event) {
+
+	console.log('document.getElementById("dropdown_options").selectedIndex: ', document.getElementById("dropdown_options").selectedIndex);
+	
+	if (document.getElementById("dropdown_options").selectedIndex == 0) {
+		document.getElementById("OPENAI_API_KEY").style.display = 'none';
+		document.getElementById("GEMINI_API_KEY").style.display = 'none';
+		
+	} else if (document.getElementById("dropdown_options").selectedIndex == 1) {
+		document.getElementById("OPENAI_API_KEY").style.display = 'block';
+		document.getElementById("GEMINI_API_KEY").style.display = 'none';
+
+	} else if (document.getElementById("dropdown_options").selectedIndex == 2) {
+		document.getElementById("OPENAI_API_KEY").style.display = 'none';
+		document.getElementById("GEMINI_API_KEY").style.display = 'block';
+		
+	}
+}
+
+document.getElementById("dropdown_options").addEventListener("change", processEvent_dropdown_options, false);
+
+// -----------------------------------------------
+
 document.getElementById("run_yaml_process_file_onButton_click").addEventListener("click", async () => {
 
 	var filename = "cb0.txt";
@@ -302,6 +340,28 @@ document.getElementById("run_yaml_process_file_onButton_click").addEventListener
 
 // Step 0: Create a file with the input query to launch the yaml (backend)
 async function run_library(filename) {
+
+	// Determine which model was selected
+	var dropdown_option_type = document.getElementById("dropdown_options").value;
+
+	var model_type_KEY;
+	if (dropdown_option_type == 'OPENAI_MODEL') {
+		model_type_KEY = document.getElementById("OPENAI_API_KEY").value;
+
+	} else if (dropdown_option_type == 'GEMINI_MODEL') {
+		model_type_KEY = document.getElementById("GEMINI_API_KEY").value;
+		
+	} else {
+		document.getElementById('notification').innerHTML = "No model was selected. Please select a model.";
+	}
+
+	// ---------------------
+	
+	// Ensure that the text_quotes do not contain | symbols
+	var text_quotes = document.getElementById("input_text").value;
+	text_quotes = await text_quotes.replace(/\\|/g, " ");
+
+	// ---------------------
 	
 	// This function creates a file cb.txt in a folder to launch a yaml process.
 	var RepoAobj = {};
@@ -311,7 +371,7 @@ async function run_library(filename) {
   	RepoAobj.foldername = '';
 	
 	RepoAobj.filename = filename;
-	RepoAobj.input_text = document.getElementById("chatbot_container_text_input").value+"|"+RepoAobj.repoA_name;
+	RepoAobj.input_text = model_type_KEY+"|"+text_quotes+"|"+document.getElementById("chatbot_container_text_input").value+"|"+RepoAobj.repoA_name;
 	RepoAobj.repoB_name = 'quote_to_chatbot_gifts';
 
 	// Way 1
