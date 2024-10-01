@@ -375,7 +375,7 @@ async function run_library() {
 	
 	// Ensure that the text_quotes do not contain | symbols
 	var text_quotes = document.getElementById("input_text").value;
-	text_quotes = await text_quotes.replace(/\\|/g, " ");
+	text_quotes = await text_quotes.replace(/\|/g, " ");
 
 	// Remove consecutive spacees
 	text_quotes = await text_quotes.replace(/\s+/g, " ");
