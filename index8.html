@@ -378,6 +378,10 @@ async function run_library() {
 	// Ensure that the text_quotes do not contain | symbols
 	// text_quotes = await text_quotes.replace(/\|/g, " ");
 
+	// Remove newline characters
+	text_quotes = await text_quotes.replace(/\n/g, " ");
+	console.log("text_quotes: ", text_quotes);
+
 	// Remove consecutive spacees
 	// text_quotes = await text_quotes.replace(/\s+/g, " ");
 
