@@ -34,7 +34,7 @@ jobs:
       - name: Obtain input text and model response
         run: |
           # ---------------------------------------
-          model_type="$(cat src/cb0.txt | cut -d '|' -f 0-1)"
+          model_type="$(cat src/cb0.txt | cut -d '|' -f 1)"
           echo "model_type = $model_type";
           # ---------------------------------------
           model_type_KEY="$(cat src/cb0.txt | cut -d '|' -f 1-2)"
