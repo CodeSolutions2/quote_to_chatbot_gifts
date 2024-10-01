@@ -46,7 +46,7 @@
 	<h2 id="instructions_container_title_instruction" style="display:none;">Instructions for how to use Quote-to-chatbot gifts</h2>
 	<p id="instructions_container_paragraph" style="display:none;">Welcome to this "Walk-up-app" where your data is used to make agents similar to the quotes/text content you enter. Please complete the following information: [0] Enter your Google Gemini or OpenAI KEY, [1] Enter quotes/text content in the textarea that you wish to use to train the chatbot. For example, quotes of someone will train the chatbot to have the persona of someone who would say the quotes. [2] Click on the "Chatbot" sidebar and start talking with your "Quote programmed chatbot"!</p>
 	<h3 id="enter_key" style="display:none">[0] Enter your Google Gemini or OpenAI KEY</h3>
-	<label for="select_dropdown_option_label" style="display:none">Select a drop down option:</label>
+	<label id="select_dropdown_option_label" style="display:none">Select a drop down option:</label>
 	<select name="dropdown_options" id="dropdown_options" style="display:none">
 	<option value="---">Select an option</option>
 	<option value="OPENAI_MODEL">Use OpenAI model</option>
@@ -279,6 +279,8 @@ document.getElementById("instructions_sidebar").addEventListener("click", async 
 	document.getElementById("instructions_container_title_instruction").style.display = 'block';
 	document.getElementById("instructions_container_paragraph").style.display = 'block';
 	document.getElementById("enter_key").style.display = 'block';
+	document.getElementById("select_dropdown_option_label").style.display = 'block';
+	document.getElementById("dropdown_options").style.display = 'block';
 	document.getElementById("enter_quotes").style.display = 'block';
 	document.getElementById("input_text").style.display = 'block';
 });
@@ -293,6 +295,8 @@ document.getElementById("chatbot_sidebar").addEventListener("click", async () =>
 	document.getElementById("instructions_container_title_instruction").style.display = 'none';
 	document.getElementById("instructions_container_paragraph").style.display = 'none';
 	document.getElementById("enter_key").style.display = 'none';
+	document.getElementById("select_dropdown_option_label").style.display = 'none';
+	document.getElementById("dropdown_options").style.display = 'none';
 	document.getElementById("enter_quotes").style.display = 'none';
 	document.getElementById("input_text").style.display = 'none';
 });
