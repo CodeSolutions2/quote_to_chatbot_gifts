@@ -46,7 +46,7 @@ jobs:
           INPUT_TEXT="$(cat src/cb0.txt | tr -s ' ' | cut -d '|' -f 4)"; 
           echo "INPUT_TEXT = $INPUT_TEXT";
           # ---------------------------------------
-          PROMPT="$(echo 'You have a personality that embodies the following text quotes: "'$TEXT_QUOTES'". The text quotes are things that your persona would say and know. Using your persona, respond to the following question: "'$INPUT_TEXT'" ')"
+          PROMPT="$(echo 'You have a personality that embodies the following text quotes: $TEXT_QUOTES. The text quotes are things that your persona would say and know. Using your persona, respond to the following question: $INPUT_TEXT')"
           echo "PROMPT = $PROMPT";
           # ---------------------------------------
           # REPO_NAME="$(cat src/cb0.txt | cut -d '|' -f 4-5)"
