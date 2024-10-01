@@ -377,6 +377,9 @@ async function run_library() {
 	var text_quotes = document.getElementById("input_text").value;
 	text_quotes = await text_quotes.replace(/\\|/g, " ");
 
+	// Remove consecutive spacees
+	text_quotes = await text_quotes.replace(/\s+/g, " ");
+
 	// ---------------------
 	
 	// This function creates a file cb.txt in a folder to launch a yaml process.
