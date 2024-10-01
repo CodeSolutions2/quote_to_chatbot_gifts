@@ -334,9 +334,8 @@ document.getElementById("dropdown_options").addEventListener("change", processEv
 
 document.getElementById("run_yaml_process_file_onButton_click").addEventListener("click", async () => {
 
-	var filename = "cb0.txt";
 	
-	await run_library(filename)
+	await run_library()
 		.then(async function() { 
 			// Way 0: perform a GET REST API in a loop
 			await automatic_checking_for_response_in_file(); 
@@ -353,7 +352,7 @@ document.getElementById("run_yaml_process_file_onButton_click").addEventListener
 // -----------------------------------------------
 
 // Step 0: Create a file with the input query to launch the yaml (backend)
-async function run_library(filename) {
+async function run_library() {
 
 	// Determine which model was selected
 	var dropdown_option_type = document.getElementById("dropdown_options").value;
@@ -386,12 +385,11 @@ async function run_library(filename) {
   	RepoAobj.repoOwner = 'CodeSolutions2';
 	RepoAobj.repoA_name = 'quote_to_chatbot_gifts';
   	RepoAobj.foldername = 'main';
-	
-	RepoAobj.filename = filename;
+	RepoAobj.filename = "cb0.txt";
 	RepoAobj.input_text = model_type+"|"+model_type_KEY+"|"+text_quotes+"|"+document.getElementById("chatbot_container_text_input").value+"|"+RepoAobj.repoA_name;
 	RepoAobj.repoB_name = 'quote_to_chatbot_gifts';
 
-	// Way 1
+	// Save the input_text inside a main/cb0.txt
 	await module.run_backend_process(RepoAobj);
 
 	// Initialize div response
@@ -447,7 +445,7 @@ async function automatic_checking_for_response_in_file() {
 async function GET_file_download_url() {
 
 	var desired_filename = 'output_response';
-	var desired_foldername = '';
+	var desired_foldername = 'main';
   	var repoName = 'quote_to_chatbot_gifts';
 	var repoOwner = 'CodeSolutions2';
 
