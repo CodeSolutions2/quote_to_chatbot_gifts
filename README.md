@@ -6,6 +6,4 @@ Log quotes or expressions from friends and family and give a text-2-chatbot to t
 [Working version using the Google Gemini model] https://codesolutions2.github.io/quote_to_chatbot_gifts/gift0/index7.html
 
 ## In progress
-  - Make the UI more explainatory
-  - Add user credential inputs such as storage of [keys, personal text] in Google Storage
   - Add two more AI professional models (OpenAI, etc)
