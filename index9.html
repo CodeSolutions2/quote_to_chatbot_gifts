@@ -344,7 +344,7 @@ document.getElementById("run_yaml_process_file_onButton_click").addEventListener
 		const chars_arr = chars.split('');
 		for (let i=0; i<10; i++) {
 			ind = Math.floor(Math.random()*chars_arr.length);
-			while (i == 0 && ind < 26) {
+			while (i == 0 && ind > 26) {
 				ind = Math.floor(Math.random()*chars_arr.length);
 			}
 			desired_filename.push(chars_arr.at(ind));
