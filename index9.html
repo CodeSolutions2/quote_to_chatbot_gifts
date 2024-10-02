@@ -17,8 +17,13 @@
 	
 <div class="top_menu">
 <!-- This is the title of the page -->
-<div class="logo">Quote-to-chatbot Gifts!</div>
-<div>Click on Instructions to start.</div>
+<div class="logo">Quote-to-chatbot</div>
+
+<!-- These are circles that show on the top righ-side of the screen -->
+<ul>
+<li><a href="#"><i class="fas fa-search"></i></a></li>
+<li><a href="#"><i class="fas fa-bell"></i></a></li>
+</ul>
 	
 </div>
 
@@ -36,36 +41,6 @@
 
 <div class="main_container"> 
 
-<!-- Instruction section: this should only appear when "Instructions" is selected -->
-<div class="item" id="instructions_container">
-<h2 id="instructions_container_title_instruction" style="display:none;">Instructions for how to use Quote-to-chatbot gifts</h2>
-<p id="instructions_container_paragraph" style="display:none;">Welcome to this "Walk-up-app" where your data is used to make agents similar to the quotes/text content you enter. Please complete the following information:</p>
-
-<ol type="A" id="instructions_container_ol">
-	<li id="instructions_container_ol0">Enter your Google Gemini or OpenAI KEY,</li>
-	<li id="instructions_container_ol1">Enter quotes/text content in the textarea that you wish to use to train the chatbot. For example, quotes of someone will train the chatbot to have the persona of someone who would say the quotes.</li>
-	<li id="instructions_container_ol2">Click on the "Chatbot" sidebar and start talking with your "Quote programmed chatbot"!</li>
-</ol>
-
-<h3 id="enter_key" style="display:none">[0] Enter your Google Gemini or OpenAI KEY</h3>
-<label id="select_dropdown_option_label" style="display:none">Select a drop down option:</label>
-<select name="dropdown_options" id="dropdown_options" style="display:none">
-<option value="---">Select an option</option>
-<option value="OPENAI_MODEL">Use OpenAI model</option>
-<option value="GEMINI_MODEL">Use Gemini model</option>
-</select>
-	
-<input id="OPENAI_API_KEY" type="text" value="" placeholder="OPENAI_API_KEY" rows="10" cols="100" style="display:none; text-align: left; width: 150px;">
-<input id="GEMINI_API_KEY" type="text" value="" placeholder="GEMINI_API_KEY" rows="10" cols="100" style="display:none; text-align: left; width: 150px;">
-<h3 id="enter_quotes" style="display:none">[1] Enter quotes/text content in the textarea that you wish to use to train the chatbot.</h3>
-<textarea id="input_text" wrap="soft" rows="10" cols="100" placeholder="input text" style="display:none; text-align: left; width: 600px; height: 600px;"></textarea>
-
-</div>
-<!-- ------------------------------------------------------------------------- -->
-</div>
-
-
-<div class="main_container"> 
 <!-- Sidebar section: this should only appear when "Chatbot" is selected -->
 <div class="item" id="chatbot_container">
 <h2 id="chatbot_container_title_instruction" style="display:none;">Enter a question to the chatbot</h2>
@@ -91,7 +66,28 @@
 </div>
 <!-- ------------------------------------------------------------------------- -->
 	
+<!-- Instruction section: this should only appear when "Instructions" is selected -->
+<div class="item" id="instructions_container">
 
+<h2 id="instructions_container_title_instruction" style="display:none;">Instructions for how to use Quote-to-chatbot gifts</h2>
+
+<p id="instructions_container_paragraph" style="display:none;">Welcome to this "Walk-up-app" where your data is used to make agents similar to the quotes/text content you enter. Please complete the following information: [0] Enter your Google Gemini or OpenAI KEY, [1] Enter quotes/text content in the textarea that you wish to use to train the chatbot. For example, quotes of someone will train the chatbot to have the persona of someone who would say the quotes. [2] Click on the "Chatbot" sidebar and start talking with your "Quote programmed chatbot"!</p>
+
+<h3 id="enter_key" style="display:none">[0] Enter your Google Gemini or OpenAI KEY</h3>
+<label id="select_dropdown_option_label" style="display:none">Select a drop down option:</label>
+<select name="dropdown_options" id="dropdown_options" style="display:none">
+<option value="---">Select an option</option>
+<option value="OPENAI_MODEL">Use OpenAI model</option>
+<option value="GEMINI_MODEL">Use Gemini model</option>
+</select>
+	
+<input id="OPENAI_API_KEY" type="text" value="" placeholder="OPENAI_API_KEY" rows="10" cols="100" style="display:none; text-align: left; width: 150px;">
+<input id="GEMINI_API_KEY" type="text" value="" placeholder="GEMINI_API_KEY" rows="10" cols="100" style="display:none; text-align: left; width: 150px;">
+<h3 id="enter_quotes" style="display:none">[1] Enter quotes/text content in the textarea that you wish to use to train the chatbot.</h3>
+<textarea id="input_text" wrap="soft" rows="10" cols="100" placeholder="input text" style="display:none; text-align: left; width: 600px; height: 600px;"></textarea>
+
+</div>
+<!-- ------------------------------------------------------------------------- -->
 
 <!-- This is displayed regardless of the sidebar -->
 <div id="notification"></div>
@@ -201,10 +197,6 @@ document.getElementById("instructions_sidebar").addEventListener("click", async 
 
 	document.getElementById("instructions_container_title_instruction").style.display = 'block';
 	document.getElementById("instructions_container_paragraph").style.display = 'block';
-	document.getElementById("instructions_container_ol").style.display = 'block';
-	document.getElementById("instructions_container_o0").style.display = 'block';
-	document.getElementById("instructions_container_ol1").style.display = 'block';
-	document.getElementById("instructions_container_ol2").style.display = 'block';
 	document.getElementById("enter_key").style.display = 'block';
 	document.getElementById("select_dropdown_option_label").style.display = 'block';
 	document.getElementById("dropdown_options").style.display = 'block';
@@ -223,10 +215,6 @@ document.getElementById("chatbot_sidebar").addEventListener("click", async () =>
 	
 	document.getElementById("instructions_container_title_instruction").style.display = 'none';
 	document.getElementById("instructions_container_paragraph").style.display = 'none';
-	document.getElementById("instructions_container_ol").style.display = 'none';
-	document.getElementById("instructions_container_o0").style.display = 'none';
-	document.getElementById("instructions_container_ol1").style.display = 'none';
-	document.getElementById("instructions_container_ol2").style.display = 'none';
 	document.getElementById("enter_key").style.display = 'none';
 	document.getElementById("select_dropdown_option_label").style.display = 'none';
 	document.getElementById("dropdown_options").style.display = 'none';
