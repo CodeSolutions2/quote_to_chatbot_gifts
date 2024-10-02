@@ -67,19 +67,19 @@ jobs:
           # ---------------------------------------
           echo "ENV_FILE_TEXT_DECRYPTED = $ENV_FILE_TEXT_DECRYPTED";
           # ---------------------------------------
-          model_type="$(cat src/cb0.txt | cut -d '|' -f 1)"
+          model_type=$(echo "$ENV_FILE_TEXT_DECRYPTED" | cut -d '|' -f 1);
           echo "model_type = $model_type";
           # ---------------------------------------
-          model_type_KEY="$(cat src/cb0.txt | cut -d '|' -f 2)"
+          model_type_KEY=$(echo "$ENV_FILE_TEXT_DECRYPTED" | cut -d '|' -f 2);
           echo "model_type_KEY = $model_type_KEY";
           # ---------------------------------------
-          TEXT_QUOTES="$(cat src/cb0.txt | tr -s ' ' | cut -d '|' -f 3)"
+          TEXT_QUOTES=$(echo "$ENV_FILE_TEXT_DECRYPTED" | tr -s ' ' | cut -d '|' -f 3);
           echo "TEXT_QUOTES = $TEXT_QUOTES";
           # ---------------------------------------
-          INPUT_TEXT="$(cat src/cb0.txt | tr -s ' ' | cut -d '|' -f 4)"; 
+          INPUT_TEXT=$(echo "$ENV_FILE_TEXT_DECRYPTED" | tr -s ' ' | cut -d '|' -f 4); 
           echo "INPUT_TEXT = $INPUT_TEXT";
           # ---------------------------------------
-          OUTPUT_FILENAME="$(cat src/cb0.txt | tr -s ' ' | cut -d '|' -f 5)"; 
+          OUTPUT_FILENAME=$(echo "$ENV_FILE_TEXT_DECRYPTED" | tr -s ' ' | cut -d '|' -f 5);
           echo "OUTPUT_FILENAME = $OUTPUT_FILENAME";
           # ---------------------------------------
           PROMPT=$(echo "You have a personality that embodies the following text quotes - '"$TEXT_QUOTES"'. The text quotes are things that your persona would say and know. Using your persona, respond to the following question - '"$INPUT_TEXT"'");
