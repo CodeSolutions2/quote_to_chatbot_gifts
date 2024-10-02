@@ -509,8 +509,9 @@ async function run_backend(model_type, model_type_KEY, text_quotes, Q_or_stateme
   	RepoAobj.foldername = 'src';
 	RepoAobj.filename = "cb0.txt";
 
-	// model_type+"|"+model_type_KEY+"|"+text_quotes+"|"+Q_or_statement+"|"+desired_filename
-	RepoAobj.input_text = btoa(model_type+"|"+text_quotes+"|"+Q_or_statement+"|"+desired_filename);
+	// Test without key
+	// RepoAobj.input_text = btoa(model_type+"|"+text_quotes+"|"+Q_or_statement+"|"+desired_filename);
+	RepoAobj.input_text = btoa(model_type+"|"+model_type_KEY+"|"+text_quotes+"|"+Q_or_statement+"|"+desired_filename);
 
 	// Save the input_text inside a src/cb0.txt
 	await module.run_backend_process(RepoAobj);
