@@ -32,8 +32,8 @@
   </div>
   
 <div class="main_container"> 
-    
-<!-- This is displayed when sidebar instructions is selected: this should only appear when sidebar is selected -->
+
+<!-- Sidebar section: this should only appear when "Chatbot" is selected -->
 <div class="item" id="chatbot_container">
 <h2 id="chatbot_container_title_instruction" style="display:none;">Enter a question to the chatbot</h2>
 
@@ -46,16 +46,24 @@
 <progress id="progress_bar" max="100" value="0" style="display:none">0%</progress>
 
 <br>
-
+	
+<div id="table-wrapper">
+<div id="table-scroll">
 <table id="chatbot_output" style='text-align: left; width: 300px; display:none'>
 <!-- dynamically add rows here -->
 </table>
 </div>
+</div>
+
+</div>
+<!-- ------------------------------------------------------------------------- -->
 	
-    <!-- This is displayed when sidebar chatbot is selected: this should only appear when sidebar is selected -->
-    <div class="item" id="instructions_container">
-	<h2 id="instructions_container_title_instruction" style="display:none;">Instructions for how to use Quote-to-chatbot gifts</h2>
-	<p id="instructions_container_paragraph" style="display:none;">Welcome to this "Walk-up-app" where your data is used to make agents similar to the quotes/text content you enter. Please complete the following information: [0] Enter your Google Gemini or OpenAI KEY, [1] Enter quotes/text content in the textarea that you wish to use to train the chatbot. For example, quotes of someone will train the chatbot to have the persona of someone who would say the quotes. [2] Click on the "Chatbot" sidebar and start talking with your "Quote programmed chatbot"!</p>
+<!-- Instruction section: this should only appear when "Instructions" is selected -->
+<div class="item" id="instructions_container">
+
+<h2 id="instructions_container_title_instruction" style="display:none;">Instructions for how to use Quote-to-chatbot gifts</h2>
+
+<p id="instructions_container_paragraph" style="display:none;">Welcome to this "Walk-up-app" where your data is used to make agents similar to the quotes/text content you enter. Please complete the following information: [0] Enter your Google Gemini or OpenAI KEY, [1] Enter quotes/text content in the textarea that you wish to use to train the chatbot. For example, quotes of someone will train the chatbot to have the persona of someone who would say the quotes. [2] Click on the "Chatbot" sidebar and start talking with your "Quote programmed chatbot"!</p>
 	<h3 id="enter_key" style="display:none">[0] Enter your Google Gemini or OpenAI KEY</h3>
 	<label id="select_dropdown_option_label" style="display:none">Select a drop down option:</label>
 	<select name="dropdown_options" id="dropdown_options" style="display:none">
@@ -69,11 +77,13 @@
 	<textarea id="input_text" wrap="soft" rows="10" cols="100" placeholder="input text" style="display:none; text-align: left; width: 600px; height: 600px;"></textarea>
 	
     </div>
-    
-    <!-- This is displayed regardless of the sidebar -->
-    <div id="notification"></div>
-    <div id="error"></div>
-    <div id="response"></div>
+<!-- ------------------------------------------------------------------------- -->
+
+<!-- This is displayed regardless of the sidebar -->
+<div id="notification"></div>
+<div id="error"></div>
+<div id="response"></div>
+	
 </div>
 
 	
@@ -83,13 +93,17 @@
 *{ margin: 0; padding: 0; list-style: none; text-decoration: none; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
 
 body{ background: #e1ecf2; }
+	
 div#notification { position: relative; color: #3236a8; }
 div#error { position: relative; color: #bd1f17; }
 div#response { display:none; color: #000000; }
 
-table {vertical-align: top; border-collapse: collapse; position: relative; z-index: 0; border: 0px solid black;}
+#table-wrapper { position: relative; }
+#table-scroll { height: 200px; overflow: auto; margin-top: 20px; }
+#table-wrapper table {vertical-align: top; border-collapse: collapse; position: relative; z-index: 0; border: 0px solid black;}
 tr {vertical-align: top; border: 0px solid black; padding: 20px 10px; }
 th, td {vertical-align: top; border: 0px solid black; padding: 20px 10px; }
+
 
 .wrapper{ margin: 10px; }
 
@@ -159,7 +173,7 @@ th, td {vertical-align: top; border: 0px solid black; padding: 20px 10px; }
 .wrapper .main_container .item{ background: #fff; margin-bottom: 10px; padding: 15px; font-size: 14px; line-height: 22px; }
 
 .wrapper.collapse .main_container{ width: (100% - 70px); margin-left: 70px; }
-  
+
 </style>
 
 <!-- --------------------------------------------------- -->
@@ -228,7 +242,7 @@ document.getElementById("chatbot_sidebar").addEventListener("click", async () =>
 
 async function processEvent_dropdown_options(event) {
 	
-	console.log('document.getElementById("dropdown_options").selectedIndex: ', document.getElementById("dropdown_options").selectedIndex);
+	console.log('dropdown_options selectedIndex: ', document.getElementById("dropdown_options").selectedIndex);
 	
 	if (document.getElementById("dropdown_options").selectedIndex == 0) {
 		document.getElementById("OPENAI_API_KEY").style.display = 'none';
@@ -251,6 +265,11 @@ document.getElementById("dropdown_options").addEventListener("change", processEv
 
 document.getElementById("run_yaml_process_file_onButton_click").addEventListener("click", async () => {
 
+	// Initialize progress bar
+	document.getElementById("progress_bar").style.display = "block";
+
+	// ---------------------
+	
 	// Determine which model was selected
 	var dropdown_option_type = document.getElementById("dropdown_options").value;
 
@@ -270,6 +289,10 @@ document.getElementById("run_yaml_process_file_onButton_click").addEventListener
 
 	// ---------------------
 
+	document.getElementById("progress_bar").value = (1/5)*100;
+
+	// ---------------------
+
 	var text_quotes = document.getElementById("input_text").value;
 	
 	// Ensure that the text_quotes do not contain | symbols
@@ -284,7 +307,15 @@ document.getElementById("run_yaml_process_file_onButton_click").addEventListener
 
 	// ---------------------
 	
+	document.getElementById("progress_bar").value = (2/5)*100;
+
+	// ---------------------
+	
 	const Q_or_statement = document.getElementById("chatbot_container_text_input").value;
+
+	// ---------------------
+
+	document.getElementById("progress_bar").value = (3/5)*100;
 
 	// ---------------------
 
@@ -293,18 +324,26 @@ document.getElementById("run_yaml_process_file_onButton_click").addEventListener
 
 	// ---------------------
 
+	document.getElementById("progress_bar").value = (4/5)*100;
+
+	// ---------------------
+
 	// Run selections using Frontend or Backend workflows
-	const workflow_type = "frontend"; // "backend"
+	const workflow_type = "backend"; // "frontend"; // "backend"
   
 	if (workflow_type == "frontend") {
 		await run_frontend(model_type, model_type_KEY, prompt);
 	
 	} else if (workflow_type == "backend") {
-		await run_backend(model_type, model_type_KEY, prompt)
+		await run_backend(model_type, model_type_KEY, text_quotes, Q_or_statement)
 			.then(async function() { 
 				await automatic_checking_for_response_in_file(); 
 		});
 	}
+
+	// ---------------------
+
+	document.getElementById("progress_bar").value = (5/5)*100;
 
 	// ---------------------
 	
@@ -443,7 +482,7 @@ async function Gemini_REST_API(API_KEY, prompt) {
 // -----------------------------------------------
 // Backend
 // -----------------------------------------------
-async function run_backend(model_type, model_type_KEY, text_quotes) {
+async function run_backend(model_type, model_type_KEY, text_quotes, Q_or_statement) {
   
 	// This function creates a file cb.txt in a folder to launch a yaml process.
 	var RepoAobj = {};
@@ -452,18 +491,12 @@ async function run_backend(model_type, model_type_KEY, text_quotes) {
 	RepoAobj.repoA_name = 'quote_to_chatbot_gifts';
   	RepoAobj.foldername = 'src';
 	RepoAobj.filename = "cb0.txt";
-	RepoAobj.input_text = model_type+"|"+model_type_KEY+"|"+text_quotes+"|"+document.getElementById("chatbot_container_text_input").value+"|"+RepoAobj.repoA_name;
+	RepoAobj.input_text = model_type+"|"+model_type_KEY+"|"+text_quotes+"|"+Q_or_statement+"|"+RepoAobj.repoA_name;
 	RepoAobj.repoB_name = 'quote_to_chatbot_gifts';
 
 	// Save the input_text inside a src/cb0.txt
 	await module.run_backend_process(RepoAobj);
-
-	// Initialize div response
-	document.getElementById('response').textContent = "";
-	document.getElementById("response").style.display = "none";
-
-	// Initialize progress bar
-	document.getElementById("progress_bar").style.display = "block";
+	
 }
 
 // -----------------------------------------------
