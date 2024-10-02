@@ -299,16 +299,10 @@ document.getElementById("run_yaml_process_file_onButton_click").addEventListener
 	// ---------------------
 
 	var text_quotes = document.getElementById("input_text").value;
-	
-	// Ensure that the text_quotes do not contain | symbols
-	// text_quotes = await text_quotes.replace(/\|/g, " ");
 
 	// Remove newline characters
 	text_quotes = await text_quotes.replace(/\n/g, " ");
 	console.log("text_quotes: ", text_quotes);
-
-	// Remove consecutive spacees
-	// text_quotes = await text_quotes.replace(/\s+/g, " ");
 
 	// ---------------------
 	
@@ -333,32 +327,8 @@ document.getElementById("run_yaml_process_file_onButton_click").addEventListener
 
 	// ---------------------
 
-	// Run selections using Frontend or Backend workflows
-	const workflow_type = "backend"; // "frontend"; // "backend"
-  
-	if (workflow_type == "frontend") {
-		await run_frontend(model_type, model_type_KEY, prompt);
+	await run_frontend(model_type, model_type_KEY, prompt);
 	
-	} else if (workflow_type == "backend") {
-
-		var desired_filename = [];
-		const chars = 'abcdefghijklmnopqrstuvwxyz0123456789_-';
-		const chars_arr = chars.split('');
-		for (let i=0; i<10; i++) {
-			ind = Math.floor(Math.random()*chars_arr.length);
-			while (i == 0 && ind > 26) {
-				ind = Math.floor(Math.random()*chars_arr.length);
-			}
-			desired_filename.push(chars_arr.at(ind));
-		}
-		desired_filename = desired_filename.join('')+'.cfg'; // .log, .conf, .cfg (configuration file)
-		console.log("desired_filename: ", desired_filename);
-		
-		await run_backend(model_type, model_type_KEY, text_quotes, Q_or_statement, desired_filename)
-			.then(async function() { 
-				await automatic_checking_for_response_in_file(desired_filename); 
-		});
-	}
 
 	// ---------------------
 
@@ -491,104 +461,6 @@ async function Gemini_REST_API(API_KEY, prompt) {
 }
 
 // -----------------------------------------------
-
-
-
-
-
-
-
-// -----------------------------------------------
-// Backend
-// -----------------------------------------------
-async function run_backend(model_type, model_type_KEY, text_quotes, Q_or_statement, desired_filename) {
-  
-	// This function creates a file cb.txt in a folder to launch a yaml process.
-	var RepoAobj = {};
-  	RepoAobj.repoOwner = 'CodeSolutions2';
-	RepoAobj.repoA_name = 'quote_to_chatbot_gifts';
-	RepoAobj.repoB_name = 'quote_to_chatbot_gifts';
-  	RepoAobj.foldername = 'src';
-	RepoAobj.filename = "cb0.txt";
-
-	// Test without key
-	// RepoAobj.input_text = btoa(model_type+"|"+text_quotes+"|"+Q_or_statement+"|"+desired_filename);
-	RepoAobj.input_text = btoa(model_type+"|"+model_type_KEY+"|"+text_quotes+"|"+Q_or_statement+"|"+desired_filename);
-
-	// Save the input_text inside a src/cb0.txt
-	await module.run_backend_process(RepoAobj);
-}
-
-// -----------------------------------------------
-
-async function automatic_checking_for_response_in_file(desired_filename) {
-
-	// Wait for file creation
-	var flag = "run";
-	var i = 0;
-	
-	while (flag == "run" && i < 20) {
-		
-		const file_download_url = await GET_file_download_url(desired_filename);
-
-		if (file_download_url == 'No_file_found') {
-			// Time to wait in between trying to read the file
-			await new Promise(r => setTimeout(r, 10000)); 
-		} else {
-			// 1st time it writes to div response
-			var text = await print_result(file_download_url);
-			console.log('text: ', text);
-			
-			// Remove newline characters
-			text = await text.replace(/\\n/g, "");
-			console.log("text_quotes: ", text_quotes);
-
-			// Remove \" characters
-			text = await text.replace(/\\"/g, "");
-			console.log("text: ", text);
-			
-			document.getElementById('response').innerHTML = text;
-			flag = "stop";
-		}
-
-		// Update counter
-		i += 1;
-		console.log('i: ', i);
-		
-		// Update progress bar
-		document.getElementById("progress_bar").value = (i/20)*100;
-		
-	}
-}
-
-// -----------------------------------------------
-
-async function GET_file_download_url(desired_filename) {
-
-	var desired_foldername = 'src';
-  	var repoName = 'quote_to_chatbot_gifts';
-	var repoOwner = 'CodeSolutions2';
-
-	var objOut = await module1.GET_fileDownloadUrl_and_sha(desired_filename, desired_foldername, repoName, repoOwner);
-	
-	const file_download_url = objOut.file_download_url[0];
-	console.log('file_download_url: ', file_download_url);
-	// https://raw.githubusercontent.com/CodeSolutions2/quote_to_chatbot_gifts/main/src/$desired_filename
-	return file_download_url;
-}
-	
-// -----------------------------------------------
-
-async function print_result(file_download_url) {
-
-	return await fetch(file_download_url)
-		.then(res => res.text())
-		.then(function (text_out) { console.log('text_out: ', text_out); return text_out; })
-		.catch(error => { document.getElementById("error").innerHTML = error; });
-}
-	
-// -----------------------------------------------
-
 
 
 
