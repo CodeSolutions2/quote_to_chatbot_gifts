@@ -124,7 +124,7 @@ jobs:
             rm src/output_response.txt;
           fi;
           if [ -f src/cb0.txt ]; then
-            echo '' > cb0.txt
+            echo '' > src/cb0.txt
           fi;
          
       - name: Commit and push changes
