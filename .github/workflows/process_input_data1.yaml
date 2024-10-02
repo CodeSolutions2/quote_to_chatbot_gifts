@@ -31,6 +31,7 @@ jobs:
           file_text="$(cat src/cb0.txt)"
           echo "file_text = $file_text";
           FILE_TEXT_DECRYPTED_BASH="$(cat src/cb0.txt | base64 -d)";
+          echo "FILE_TEXT_DECRYPTED_BASH = $FILE_TEXT_DECRYPTED_BASH";
           # ---------------------------------------
           # Save model output to GitHub environmental variables
           echo "FILE_TEXT=$(echo $file_text)" >> "$GITHUB_ENV";
@@ -60,7 +61,12 @@ jobs:
           script: |
             var FILE_TEXT_DECRYPTED = atob(process.env.FILE_TEXT); // This will be displayed in the file
             console.log('FILE_TEXT_DECRYPTED: ', FILE_TEXT_DECRYPTED);
-            process.env.ENV_FILE_TEXT_DECRYPTED = FILE_TEXT_DECRYPTED;
+            // Save to environmental variable
+            // process.env.ENV_FILE_TEXT_DECRYPTED = FILE_TEXT_DECRYPTED; // does not work
+            // OR
+            // Save to file on the backend only
+            const fs = require('fs');
+            fs.writeFileSync('.github/.temp_env', FILE_TEXT_DECRYPTED);
        
 
       - name: Obtain input text and model response
@@ -68,19 +74,19 @@ jobs:
           # ---------------------------------------
           echo "ENV_FILE_TEXT_DECRYPTED = $ENV_FILE_TEXT_DECRYPTED";
           # ---------------------------------------
-          model_type=$(echo "$FILE_TEXT_DECRYPTED_BASH" | cut -d '|' -f 1);
+          model_type="$(cat .github/.temp_env | cut -d '|' -f 1)"
           echo "model_type = $model_type";
           # ---------------------------------------
-          model_type_KEY=$(echo "$FILE_TEXT_DECRYPTED_BASH" | cut -d '|' -f 2);
+          model_type_KEY="$(cat .github/.temp_env | cut -d '|' -f 2)"
           echo "model_type_KEY = $model_type_KEY";
           # ---------------------------------------
-          TEXT_QUOTES=$(echo "$FILE_TEXT_DECRYPTED_BASH" | tr -s ' ' | cut -d '|' -f 3);
+          TEXT_QUOTES="$(cat .github/.temp_env | cut -d '|' -f 3)"
           echo "TEXT_QUOTES = $TEXT_QUOTES";
           # ---------------------------------------
-          INPUT_TEXT=$(echo "$FILE_TEXT_DECRYPTED_BASH" | tr -s ' ' | cut -d '|' -f 4); 
+          INPUT_TEXT="$(cat .github/.temp_env | cut -d '|' -f 4)"
           echo "INPUT_TEXT = $INPUT_TEXT";
           # ---------------------------------------
-          OUTPUT_FILENAME=$(echo "$FILE_TEXT_DECRYPTED_BASH" | tr -s ' ' | cut -d '|' -f 5);
+          OUTPUT_FILENAME="$(cat .github/.temp_env | cut -d '|' -f 5)"
           echo "OUTPUT_FILENAME = $OUTPUT_FILENAME";
           # ---------------------------------------
           PROMPT=$(echo "You have a personality that embodies the following text quotes - '"$TEXT_QUOTES"'. The text quotes are things that your persona would say and know. Using your persona, respond to the following question - '"$INPUT_TEXT"'");
