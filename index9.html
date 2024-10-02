@@ -243,8 +243,8 @@ document.getElementById("chatbot_sidebar").addEventListener("click", async () =>
 // -----------------------------------------------
 
 async function processEvent_dropdown_options(event) {
-
-	console.log('document.getElementById("dropdown_options").selectedIndex: ', document.getElementById("dropdown_options").selectedIndex);
+  
+  console.log('document.getElementById("dropdown_options").selectedIndex: ', document.getElementById("dropdown_options").selectedIndex);
 	
 	if (document.getElementById("dropdown_options").selectedIndex == 0) {
 		document.getElementById("OPENAI_API_KEY").style.display = 'none';
@@ -305,15 +305,17 @@ document.getElementById("run_yaml_process_file_onButton_click").addEventListener
   // ---------------------
 
   const prompt = `You have a personality that embodies the following text quotes: ${text_quotes}. The text quotes are things that your persona would say and know. Using your persona, respond to the following question: ${Q_or_statement})`
+  console.log("prompt: ", prompt);
 
   // ---------------------
 
   // Run selections using Frontend or Backend workflows
   const workflow_type = "frontend"; // "backend"
+  
   if (workflow_type == "frontend") {
 
     await run_frontend(model_type, model_type_KEY, prompt);
-    
+
   } else if (workflow_type == "backend") {
     
     await run_backend(model_type, model_type_KEY, prompt)
@@ -324,6 +326,8 @@ document.getElementById("run_yaml_process_file_onButton_click").addEventListener
 
   }
 
+  await print_response_to_frontend();
+  
   // Reset progress bar
 			document.getElementById("progress_bar").style.display = "none";
 			
@@ -334,6 +338,7 @@ document.getElementById("run_yaml_process_file_onButton_click").addEventListener
 async function print_response_to_frontend() {
 
 	document.getElementById("chatbot_output").style.display = "block";
+  document.getElementById("response").style.display = "block";
 	
 	// Print response to Frontend here
 	let tbl = document.getElementById("chatbot_output");
@@ -378,12 +383,21 @@ async function print_response_to_frontend() {
 // Frontend
 // -----------------------------------------------
 async function run_frontend(model_type, model_type_KEY, prompt) {
+
+  console.log("model_type: ", model_type);
   
   if (model_type == 'OPENAI_MODEL') {
-    document.getElementById('response').innerHTML = await OpenAI_REST_API(model_type_KEY, prompt);
+    var text_out = await OpenAI_REST_API(model_type_KEY, prompt);
+    console.log("text_out: ", text_out);
+
+    document.getElementById('response').innerHTML = text_out;
   
 	} else if (model_type == 'GEMINI_MODEL') {
-    document.getElementById('response').innerHTML = await Gemini_REST_API(model_type_KEY, prompt);
+    var text_out = await Gemini_REST_API(model_type_KEY, prompt);
+    console.log("text_out: ", text_out);
+    
+    document.getElementById('response').innerHTML = text_out;
+    
 	} else {
     document.getElementById('response').innerHTML = "No model was selected. Please select a model.";
   }
@@ -408,7 +422,7 @@ var system_content = "You are a helpful assistant"
           return await fetch(url, options)
             .then(res => res.json())
             .then(res => { return JSON.parse(JSON.stringify(res))['choices'][0]['message']['content'] })
-            .catch(error => { document.getElementById('error').innerHTML = error; });
+            .catch(error => { console.log("error: ", error); document.getElementById('error').innerHTML = error; });
 }
 
 // -----------------------------------------------
@@ -426,8 +440,9 @@ async function Gemini_REST_API(API_KEY, prompt) {
   // Print text part of JSON response only with user message
           return await fetch(url, options)
             .then(res => res.json())
-            .then(res => { return JSON.parse(JSON.stringify(res))['candidates'][0]['content']['parts'][0]['text']; })
-            .catch(error => { document.getElementById('error').innerHTML = error; });
+            .then(res => { console.log("res: ", res); 
+                          return JSON.parse(JSON.stringify(res))['candidates'][0]['content']['parts'][0]['text']; })
+            .catch(error => { console.log("error: ", error); document.getElementById('error').innerHTML = error; });
 }
 
 // -----------------------------------------------
