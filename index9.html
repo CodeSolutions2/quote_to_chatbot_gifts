@@ -12,26 +12,33 @@
 <div class="one"></div>
 <div class="two"></div>
 </div>
-    
-    <div class="top_menu">
-	    <!-- This is the title of the page -->
-      <div class="logo">Quote-to-chatbot</div>
-	    <!-- These are circles that show on the top righ-side of the screen -->
-      <ul>
-        <li><a href="#"><i class="fas fa-search"></i></a></li>
-        <li><a href="#"><i class="fas fa-bell"></i></a></li>
-      </ul>
-    </div>
-  </div>
+	
+<!-- ------------------------------------------------------------------------- -->
+	
+<div class="top_menu">
+<!-- This is the title of the page -->
+<div class="logo">Quote-to-chatbot</div>
+
+<!-- These are circles that show on the top righ-side of the screen -->
+<ul>
+<li><a href="#"><i class="fas fa-search"></i></a></li>
+<li><a href="#"><i class="fas fa-bell"></i></a></li>
+</ul>
+	
+</div>
+
+<!-- ------------------------------------------------------------------------- -->
+
+</div>
   
-  <div class="sidebar">
-	 <!-- This is a side list of how to change the contents on the main_container -->
-      <ul>
-        <li><a href="#" class="active" id="instructions_sidebar"><span class="icon"><i class="fas fa-blog"></i></span><span class="title">Instructions</span></a></li>
-	<li><a href="#" class="active" id="chatbot_sidebar"><span class="icon"><i class="fas fa-blog"></i></span><span class="title">Chatbot</span></a></li>
-      </ul>
-  </div>
-  
+<div class="sidebar">
+<!-- This is a side list of how to change the contents on the main_container -->
+<ul>
+<li><a href="#" class="active" id="instructions_sidebar"><span class="icon"><i class="fas fa-blog"></i></span><span class="title">Instructions</span></a></li>
+<li><a href="#" class="active" id="chatbot_sidebar"><span class="icon"><i class="fas fa-blog"></i></span><span class="title">Chatbot</span></a></li>
+</ul>
+</div>
+
 <div class="main_container"> 
 
 <!-- Sidebar section: this should only appear when "Chatbot" is selected -->
@@ -102,7 +109,7 @@ div#error { position: relative; color: #bd1f17; }
 div#response { display:none; color: #000000; }
 
 #table-wrapper { position: relative; }
-#table-scroll { height: 200px; overflow: auto; margin-top: 20px; }
+#table-scroll { height: 400px; overflow: auto; margin-top: 20px; }
 #table-wrapper table {vertical-align: top; border-collapse: collapse; position: relative; z-index: 0; border: 0px solid black;}
 tr {vertical-align: top; border: 0px solid black; padding: 20px 10px; }
 th, td {vertical-align: top; border: 0px solid black; padding: 20px 10px; }
@@ -166,15 +173,8 @@ th, td {vertical-align: top; border: 0px solid black; padding: 20px 10px; }
 .wrapper.collapse .sidebar ul li a span.icon{ margin: 0; }
 .wrapper.collapse .sidebar ul li a span.title{ display: none; }
   
-.wrapper .main_container{ width: (100% - 200px);
-  margin-top: 70px;
-  margin-left: 200px;
-  padding: 15px;
-  transition: all 0.3s ease;
-}
-
+.wrapper .main_container{ width: (100% - 200px); margin-top: 70px; margin-left: 200px; padding: 15px; transition: all 0.3s ease; }
 .wrapper .main_container .item{ background: #fff; margin-bottom: 10px; padding: 15px; font-size: 14px; line-height: 22px; }
-
 .wrapper.collapse .main_container{ width: (100% - 70px); margin-left: 70px; }
 
 </style>
@@ -338,9 +338,23 @@ document.getElementById("run_yaml_process_file_onButton_click").addEventListener
 		await run_frontend(model_type, model_type_KEY, prompt);
 	
 	} else if (workflow_type == "backend") {
-		await run_backend(model_type, model_type_KEY, text_quotes, Q_or_statement)
+
+		var desired_filename = [];
+		const chars = 'abcdefghijklmnopqrstuvwxyz0123456789_-';
+		const chars_arr = chars.split('');
+		for (let i=0; i<10; i++) {
+			ind = Math.floor(Math.random()*chars_arr.length);
+			while (i == 0 && ind < 26) {
+				ind = Math.floor(Math.random()*chars_arr.length);
+			}
+			desired_filename.push(chars_arr.at(ind));
+		}
+		desired_filename = desired_filename.join('')+'.txt';
+		console.log("desired_filename: ", desired_filename);
+		
+		await run_backend(model_type, model_type_KEY, text_quotes, Q_or_statement, desired_filename)
 			.then(async function() { 
-				await automatic_checking_for_response_in_file(); 
+				await automatic_checking_for_response_in_file(desired_filename); 
 		});
 	}
 
@@ -485,7 +499,7 @@ async function Gemini_REST_API(API_KEY, prompt) {
 // -----------------------------------------------
 // Backend
 // -----------------------------------------------
-async function run_backend(model_type, model_type_KEY, text_quotes, Q_or_statement) {
+async function run_backend(model_type, model_type_KEY, text_quotes, Q_or_statement, desired_filename) {
   
 	// This function creates a file cb.txt in a folder to launch a yaml process.
 	var RepoAobj = {};
@@ -494,7 +508,7 @@ async function run_backend(model_type, model_type_KEY, text_quotes, Q_or_stateme
 	RepoAobj.repoB_name = 'quote_to_chatbot_gifts';
   	RepoAobj.foldername = 'src';
 	RepoAobj.filename = "cb0.txt";
-	RepoAobj.input_text = model_type+"|"+model_type_KEY+"|"+text_quotes+"|"+Q_or_statement; // +"|"+RepoAobj.repoA_name;
+	RepoAobj.input_text = model_type+"|"+model_type_KEY+"|"+text_quotes+"|"+Q_or_statement+"|"+desired_filename;
 
 	// Save the input_text inside a src/cb0.txt
 	await module.run_backend_process(RepoAobj);
@@ -502,7 +516,7 @@ async function run_backend(model_type, model_type_KEY, text_quotes, Q_or_stateme
 
 // -----------------------------------------------
 
-async function automatic_checking_for_response_in_file() {
+async function automatic_checking_for_response_in_file(desired_filename) {
 
 	// Wait for file creation
 	var flag = "run";
@@ -510,7 +524,7 @@ async function automatic_checking_for_response_in_file() {
 	
 	while (flag == "run" && i < 20) {
 		
-		const file_download_url = await GET_file_download_url();
+		const file_download_url = await GET_file_download_url(desired_filename);
 
 		if (file_download_url == 'No_file_found') {
 			// Time to wait in between trying to read the file
@@ -535,7 +549,7 @@ async function automatic_checking_for_response_in_file() {
 
 // -----------------------------------------------
 
-async function GET_file_download_url() {
+async function GET_file_download_url(desired_filename) {
 
 	var desired_filename = 'output_response';
 	var desired_foldername = 'src';
