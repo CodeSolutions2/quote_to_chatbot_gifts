@@ -201,6 +201,8 @@ window.addEventListener('beforeunload', async function() {
 // -----------------------------------------------
 
 document.getElementById("instructions_sidebar").addEventListener("click", async () => {
+	
+	document.getElementById("chatbot_container").style.display = 'none';
 	document.getElementById("chatbot_container_title_instruction").style.display = 'none';
 	document.getElementById("chatbot_container_text_input").style.display = 'none';
 	document.getElementById("run_yaml_process_file_onButton_click").style.display = 'none';
@@ -223,7 +225,8 @@ document.getElementById("chatbot_sidebar").addEventListener("click", async () =>
 	document.getElementById("chatbot_container_text_input").style.display = 'block';
 	document.getElementById("run_yaml_process_file_onButton_click").style.display = 'block';
 	document.getElementById("chatbot_output").style.display = 'block';
-	
+
+	document.getElementById("instructions_container").style.display = 'none';
 	document.getElementById("instructions_container_title_instruction").style.display = 'none';
 	document.getElementById("instructions_container_paragraph").style.display = 'none';
 	document.getElementById("enter_key").style.display = 'none';
