@@ -30,7 +30,7 @@ jobs:
           # ---------------------------------------
           file_text="$(cat src/cb0.txt)"
           echo "file_text = $file_text";
-          FILE_TEXT_DECRYPTED_BASH=$(echo '$file_text' | base64 -d);
+          FILE_TEXT_DECRYPTED_BASH="$(cat src/cb0.txt | base64 -d)";
           # ---------------------------------------
           # Save model output to GitHub environmental variables
           echo "FILE_TEXT=$(echo $file_text)" >> "$GITHUB_ENV";
