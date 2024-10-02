@@ -41,30 +41,6 @@
 
 <div class="main_container"> 
 
-<!-- Sidebar section: this should only appear when "Chatbot" is selected -->
-<div class="item" id="chatbot_container">
-<h2 id="chatbot_container_title_instruction" style="display:none;">Enter a question to the chatbot</h2>
-
-<input class="inputClass" type="text" id="chatbot_container_text_input" placeholder="Enter a question to the chatbot" value="" style="display:none; text-align: left; width: 600px;">
-
-<button class="buttonClass" id="run_yaml_process_file_onButton_click" type="button" style="display:none;">Submit (response process with file)</button>
-
-<br>
-
-<progress id="progress_bar" max="100" value="0" style="display:none">0%</progress>
-
-<br>
-	
-<div id="table-wrapper">
-<div id="table-scroll">
-<table id="chatbot_output" style='text-align: left; width: 300px; display:none'>
-<!-- dynamically add rows here -->
-</table>
-</div>
-</div>
-
-</div>
-<!-- ------------------------------------------------------------------------- -->
 	
 <!-- Instruction section: this should only appear when "Instructions" is selected -->
 <div class="item" id="instructions_container">
@@ -95,6 +71,34 @@
 <div id="response"></div>
 	
 </div>
+
+
+
+<!-- ------------------------------------------------------------------------- -->
+<!-- Sidebar section: this should only appear when "Chatbot" is selected -->
+<div class="item" id="chatbot_container">
+<h2 id="chatbot_container_title_instruction" style="display:none;">Enter a question to the chatbot</h2>
+
+<input class="inputClass" type="text" id="chatbot_container_text_input" placeholder="Enter a question to the chatbot" value="" style="display:none; text-align: left; width: 600px;">
+
+<button class="buttonClass" id="run_yaml_process_file_onButton_click" type="button" style="display:none;">Submit (response process with file)</button>
+
+<br>
+
+<progress id="progress_bar" max="100" value="0" style="display:none">0%</progress>
+
+<br>
+	
+<div id="table-wrapper">
+<div id="table-scroll">
+<table id="chatbot_output" style='text-align: left; width: 300px; display:none'>
+<!-- dynamically add rows here -->
+</table>
+</div>
+</div>
+
+</div>
+<!-- ------------------------------------------------------------------------- -->
 
 	
 <!-- ---------------------------------------- -->
@@ -175,7 +179,7 @@ th, td {vertical-align: top; border: 0px solid black; padding: 20px 10px; width:
   
 .wrapper .main_container{ width: (100% - 200px); margin-top: 70px; margin-left: 200px; padding: 15px; transition: all 0.3s ease; }
 .wrapper .main_container .item{ background: #fff; margin-bottom: 10px; padding: 15px; font-size: 14px; line-height: 22px; }
-.wrapper.collapse .main_container{ width: (100% - 70px); margin-left: 70px; }
+.wrapper.collapse .main_container{ width: (100% - 70px); margin-left: 70px;  height: 0; }
 </style>
 
 <script>
