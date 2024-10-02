@@ -46,7 +46,100 @@ jobs:
           INPUT_TEXT="$(cat src/cb0.txt | tr -s ' ' | cut -d '|' -f 4)"; 
           echo "INPUT_TEXT = $INPUT_TEXT";
           # ---------------------------------------
-          PROMPT='$(echo "You have a personality that embodies the following text quotes - '"$TEXT_QUOTES"'. The text quotes are things that your persona would say and know. Using your persona, respond to the following question - '"$INPUT_TEXT"'")';
+          PROMPT=$(echo "You have a personality that embodies the following text quotes - '"$TEXT_QUOTES"'. The text quotes are things that your persona would say and know. Using your persona, respond to the following question - '"$INPUT_TEXT"'");
           echo "PROMPT = $PROMPT";
           # ---------------------------------------
+          # REPO_NAME="$(cat src/cb0.txt | cut -d '|' -f 5)"
+          # echo "REPO_NAME = $REPO_NAME";
+          # ---------------------------------------
+          if [ "$model_type" == "OPENAI_MODEL" ]; then
+            json_string_var="$(echo '{"model":"gpt-3.5-turbo", "messages":[{"role":"system", "content":"You are a helpful assistant"}, {"role":"user", "content":"'$PROMPT'"}, {"role":"assistant", "content":"Respond concisely"}], "temperature":0}' | jq -c)"; 
+            echo "json_string_var = $json_string_var";
+            # ---------------------------------------
+            model_response=$(curl -X POST https://api.openai.com/v1/chat/ompletions -H "Content-Type:application/json" -H "Authorization:Bearer $model_type_KEY" -d "$json_string_var" | jq '.choices[0].message.content');
+            echo "model_response = $model_response";
+            # ---------------------------------------
+            # Extract text from JSON response
+            model_response_text=$(echo $model_response | jq ".choices[0].message.content");
+            echo "model_response_text = $model_response_text";
+            # ---------------------------------------
+            # Save model output to GitHub environmental variables
+            echo "MODEL_RESPONSE_TEXT=$(echo $model_response_text)" >> "$GITHUB_ENV";
+            # ---------------------------------------
+          elif [ "$model_type" == "GEMINI_MODEL" ]; then
+            # Put text input in JSON format with backslash notation (jq -c mean compact JSON format)
+            json_string_var="$(echo '{"contents":[{"parts":[{"text":"'$PROMPT'"}]}]}' | jq -c)"
+            echo "json_string_var = $json_string_var";
+            # ---------------------------------------
+            # Obtain model response in JSON
+            model_response=$(curl -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=$model_type_KEY" -H "Content-Type:application/json" -d "$json_string_var");
+            echo "model_response = $model_response";
+            # ---------------------------------------
+            # Extract text from JSON response
+            model_response_text=$(echo $model_response | jq ".candidates[0].content.parts[0].text");
+            echo "model_response_text = $model_response_text";
+            # ---------------------------------------
+            # Save model output to GitHub environmental variables
+            echo "MODEL_RESPONSE_TEXT=$(echo $model_response | jq '.candidates[0].content.parts[0].text')" >> "$GITHUB_ENV";
+            # ---------------------------------------
+          else
+            model_response_text=$(echo "No model selected");
+          fi;
+          # ---------------------------------------
+          # Save model output to file
+          echo "$model_response_text" >> src/output_response.txt;
+
+      - name: Commit and push changes
+        run: |
+          repoOwner=$(echo "${{ github.repository }}" | cut -d '/' -f 1);
+          repoOwnerEmail="j622amilah@gmail.com";
+          
+          git config --global user.email ${repoOwnerEmail};
+          git config --global user.name ${repoOwner};
+          git pull origin main;
+          git checkout main;
+          git branch --set-upstream-to origin/main;
+          git merge main --ff-only;
+          git add -A; 
+          git diff-index --quiet HEAD || git commit -m "add files" --allow-empty;
+          git push;
+
+
+  clean_up_files:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      
+    steps:
+      - name: Wait for 120 seconds (2 mins)
+        run: sleep 120
+
+      - name: Re-pull the repository files
+        uses: actions/checkout@v4
+
+      - name: Remove files
+        run: |
+          if [ -f src/output_response.txt ]; then
+            rm src/output_response.txt;
+          fi;
+          if [ -f src/cb0.txt ]; then
+            echo '' > src/cb0.txt
+          fi;
+         
+      - name: Commit and push changes
+        run: |
+          repoOwner=$(echo "${{ github.repository }}" | cut -d '/' -f 1);
+          repoOwnerEmail="j622amilah@gmail.com";
+          
+          git config --global user.email ${repoOwnerEmail};
+          git config --global user.name ${repoOwner};
+          git pull origin main;
+          git checkout main;
+          git branch --set-upstream-to origin/main;
+          git merge main --ff-only;
+          git add -A; 
+          git diff-index --quiet HEAD || git commit -m "add files" --allow-empty;
+          git push;
+
           
