@@ -536,8 +536,17 @@ async function automatic_checking_for_response_in_file(desired_filename) {
 			await new Promise(r => setTimeout(r, 10000)); 
 		} else {
 			// 1st time it writes to div response
-			const text = await print_result(file_download_url);
+			var text = await print_result(file_download_url);
 			console.log('text: ', text);
+			
+			// Remove newline characters
+			text = await text.replace(/\\n/g, "");
+			console.log("text_quotes: ", text_quotes);
+
+			// Remove \" characters
+			text = await text.replace(/\\"/g, "");
+			console.log("text: ", text);
+			
 			document.getElementById('response').innerHTML = text;
 			flag = "stop";
 		}
