@@ -63,16 +63,14 @@
 	
 <!-- Instruction section: this should only appear when "Instructions" is selected -->
 <div class="item" id="instructions_container">
-
 <h2 id="instructions_container_title_instruction" style="display:none;">Instructions for how to use Quote-to-chatbot gifts</h2>
-
 <p id="instructions_container_paragraph" style="display:none;">Welcome to this "Walk-up-app" where your data is used to make agents similar to the quotes/text content you enter. Please complete the following information:</p>
 
-<ul>
-<li>Enter your Google Gemini or OpenAI KEY,</li>
-<li>Enter quotes/text content in the textarea that you wish to use to train the chatbot. For example, quotes of someone will train the chatbot to have the persona of someone who would say the quotes.</li>
-<li>Click on the "Chatbot" sidebar and start talking with your "Quote programmed chatbot"!</li>
-</ul>
+<ol type="A" id="instructions_container_ol">
+	<li>Enter your Google Gemini or OpenAI KEY,</li>
+	<li>Enter quotes/text content in the textarea that you wish to use to train the chatbot. For example, quotes of someone will train the chatbot to have the persona of someone who would say the quotes.</li>
+	<li>Click on the "Chatbot" sidebar and start talking with your "Quote programmed chatbot"!</li>
+</ol>
 
 <h3 id="enter_key" style="display:none">[0] Enter your Google Gemini or OpenAI KEY</h3>
 <label id="select_dropdown_option_label" style="display:none">Select a drop down option:</label>
@@ -115,8 +113,6 @@ th, td {vertical-align: top; border: 0px solid black; padding: 20px 10px; width:
 #table-wrapper { position: relative; }
 #table-scroll { height: 400px; overflow: auto; margin-top: 20px; }
 #table-wrapper table {vertical-align: top; border-collapse: collapse; position: relative; z-index: 0; border: 0px solid black; width: 100%; }
-
-
 
 .wrapper{ margin: 10px; }
 
@@ -179,24 +175,9 @@ th, td {vertical-align: top; border: 0px solid black; padding: 20px 10px; width:
 .wrapper .main_container{ width: (100% - 200px); margin-top: 70px; margin-left: 200px; padding: 15px; transition: all 0.3s ease; }
 .wrapper .main_container .item{ background: #fff; margin-bottom: 10px; padding: 15px; font-size: 14px; line-height: 22px; }
 .wrapper.collapse .main_container{ width: (100% - 70px); margin-left: 70px; }
-
 </style>
 
-<!-- --------------------------------------------------- -->
-
-<script type="module" crossorigin="*" redirect="follow" mode="cors">
-import { run_backend_process, GET_fileDownloadUrl_and_sha } from "https://cdn.jsdelivr.net/npm/library_to_run_github_actions@1.0.1/dist/library_to_run_GitHub_Actions.js";
-module.run_backend_process = run_backend_process;
-module1.GET_fileDownloadUrl_and_sha = GET_fileDownloadUrl_and_sha;
-</script>
-	
 <script>
-
-// -----------------------------------------------
-	
-// Way 1
-const module = {};
-const module1 = {};
 	
 // -----------------------------------------------
 	
@@ -215,6 +196,7 @@ document.getElementById("instructions_sidebar").addEventListener("click", async 
 
 	document.getElementById("instructions_container_title_instruction").style.display = 'block';
 	document.getElementById("instructions_container_paragraph").style.display = 'block';
+	document.getElementById("instructions_container_ol").style.display = 'block';
 	document.getElementById("enter_key").style.display = 'block';
 	document.getElementById("select_dropdown_option_label").style.display = 'block';
 	document.getElementById("dropdown_options").style.display = 'block';
@@ -233,6 +215,7 @@ document.getElementById("chatbot_sidebar").addEventListener("click", async () =>
 	
 	document.getElementById("instructions_container_title_instruction").style.display = 'none';
 	document.getElementById("instructions_container_paragraph").style.display = 'none';
+	document.getElementById("instructions_container_ol").style.display = 'none';
 	document.getElementById("enter_key").style.display = 'none';
 	document.getElementById("select_dropdown_option_label").style.display = 'none';
 	document.getElementById("dropdown_options").style.display = 'none';
