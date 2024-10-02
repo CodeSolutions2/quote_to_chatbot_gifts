@@ -138,15 +138,8 @@ th, td {vertical-align: top; border: 0px solid black; padding: 20px 10px; }
   display: none;
 }
 
-.wrapper .sidebar ul li a span.icon{
-  margin-right: 10px;
-  display: inline-block;
-}
-
-.wrapper .sidebar ul li a span.title{
-  display: inline-block;
-}
-
+.wrapper .sidebar ul li a span.icon{ margin-right: 10px; display: inline-block; }
+.wrapper .sidebar ul li a span.title{ display: inline-block; }
 .wrapper .sidebar ul li a:hover,
 .wrapper .sidebar ul li a.active{ background: #4360b5; color: #fff; }
 .wrapper .sidebar ul li a:hover:before,
@@ -163,16 +156,8 @@ th, td {vertical-align: top; border: 0px solid black; padding: 20px 10px; }
   transition: all 0.3s ease;
 }
 
-.wrapper .main_container .item{
-  background: #fff;
-  margin-bottom: 10px;
-  padding: 15px;
-  font-size: 14px;
-  line-height: 22px;
-}
+.wrapper .main_container .item{ background: #fff; margin-bottom: 10px; padding: 15px; font-size: 14px; line-height: 22px; }
 
-
-  
 .wrapper.collapse .main_container{ width: (100% - 70px); margin-left: 70px; }
   
 </style>
@@ -206,7 +191,7 @@ document.getElementById("instructions_sidebar").addEventListener("click", async 
 	document.getElementById("chatbot_container_title_instruction").style.display = 'none';
 	document.getElementById("chatbot_container_text_input").style.display = 'none';
 	document.getElementById("run_yaml_process_file_onButton_click").style.display = 'none';
-  document.getElementById("chatbot_output").style.display = 'none';
+	document.getElementById("chatbot_output").style.display = 'none';
 
 	document.getElementById("instructions_container_title_instruction").style.display = 'block';
 	document.getElementById("instructions_container_paragraph").style.display = 'block';
@@ -220,10 +205,11 @@ document.getElementById("instructions_sidebar").addEventListener("click", async 
 // -----------------------------------------------
 
 document.getElementById("chatbot_sidebar").addEventListener("click", async () => {
+	
 	document.getElementById("chatbot_container_title_instruction").style.display = 'block';
 	document.getElementById("chatbot_container_text_input").style.display = 'block';
 	document.getElementById("run_yaml_process_file_onButton_click").style.display = 'block';
-  document.getElementById("chatbot_output").style.display = 'block';
+	document.getElementById("chatbot_output").style.display = 'block';
 	
 	document.getElementById("instructions_container_title_instruction").style.display = 'none';
 	document.getElementById("instructions_container_paragraph").style.display = 'none';
@@ -236,15 +222,13 @@ document.getElementById("chatbot_sidebar").addEventListener("click", async () =>
 	
 	document.getElementById("enter_quotes").style.display = 'none';
 	document.getElementById("input_text").style.display = 'none';
-
-	
 });
 
 // -----------------------------------------------
 
 async function processEvent_dropdown_options(event) {
-  
-  console.log('document.getElementById("dropdown_options").selectedIndex: ', document.getElementById("dropdown_options").selectedIndex);
+	
+	console.log('document.getElementById("dropdown_options").selectedIndex: ', document.getElementById("dropdown_options").selectedIndex);
 	
 	if (document.getElementById("dropdown_options").selectedIndex == 0) {
 		document.getElementById("OPENAI_API_KEY").style.display = 'none';
@@ -299,38 +283,40 @@ document.getElementById("run_yaml_process_file_onButton_click").addEventListener
 	// text_quotes = await text_quotes.replace(/\s+/g, " ");
 
 	// ---------------------
+	
+	const Q_or_statement = document.getElementById("chatbot_container_text_input").value;
 
-  const Q_or_statement = document.getElementById("chatbot_container_text_input").value;
+	// ---------------------
 
-  // ---------------------
+	const prompt = `You have a personality that embodies the following text quotes: ${text_quotes}. The text quotes are things that your persona would say and know. Using your persona, respond to the following question: ${Q_or_statement})`
+	console.log("prompt: ", prompt);
 
-  const prompt = `You have a personality that embodies the following text quotes: ${text_quotes}. The text quotes are things that your persona would say and know. Using your persona, respond to the following question: ${Q_or_statement})`
-  console.log("prompt: ", prompt);
+	// ---------------------
 
-  // ---------------------
-
-  // Run selections using Frontend or Backend workflows
-  const workflow_type = "frontend"; // "backend"
+	// Run selections using Frontend or Backend workflows
+	const workflow_type = "frontend"; // "backend"
   
-  if (workflow_type == "frontend") {
-
-    await run_frontend(model_type, model_type_KEY, prompt);
-
-  } else if (workflow_type == "backend") {
-    
-    await run_backend(model_type, model_type_KEY, prompt)
-		.then(async function() { 
-			// Way 0: perform a GET REST API in a loop
-			await automatic_checking_for_response_in_file(); 
+	if (workflow_type == "frontend") {
+		await run_frontend(model_type, model_type_KEY, prompt);
+	
+	} else if (workflow_type == "backend") {
+		await run_backend(model_type, model_type_KEY, prompt)
+			.then(async function() { 
+				await automatic_checking_for_response_in_file(); 
 		});
+	}
 
-  }
+	// ---------------------
+	
+	// Print response to Frontend
+	await print_response_to_frontend();
 
-  await print_response_to_frontend();
-  
-  // Reset progress bar
-			document.getElementById("progress_bar").style.display = "none";
-			
+	// ---------------------
+	
+	// Reset progress bar
+	document.getElementById("progress_bar").style.display = "none";
+
+	// ---------------------
 });
 
 // -----------------------------------------------
@@ -338,7 +324,7 @@ document.getElementById("run_yaml_process_file_onButton_click").addEventListener
 async function print_response_to_frontend() {
 
 	document.getElementById("chatbot_output").style.display = "block";
-  document.getElementById("response").style.display = "block";
+	document.getElementById("response").style.display = "block";
 	
 	// Print response to Frontend here
 	let tbl = document.getElementById("chatbot_output");
@@ -358,7 +344,8 @@ async function print_response_to_frontend() {
 	// Add chatbot output to Frontend: Create a cellText OR textarea
 	row = document.createElement("tr");
 	cell = document.createElement("td");
-	cell.style.backgroundColor = "#2e4ead";
+	cell.style.backgroundColor = "#2e4ead"; // "#7787b5";
+	cell.style.color = "#ffffff";
 	cellText = document.createTextNode(`Chatbot: ${document.getElementById('response').innerHTML}`);
 	cell.appendChild(cellText);
 	cell.style.border = "10px solid rgba(0, 0, 0, 0)";
@@ -383,33 +370,33 @@ async function print_response_to_frontend() {
 // Frontend
 // -----------------------------------------------
 async function run_frontend(model_type, model_type_KEY, prompt) {
-
-  console.log("model_type: ", model_type);
-  
-  if (model_type == 'OPENAI_MODEL') {
-    var text_out = await OpenAI_REST_API(model_type_KEY, prompt);
-    console.log("text_out: ", text_out);
-
-    document.getElementById('response').innerHTML = text_out;
-  
+	
+	console.log("model_type: ", model_type);
+	
+	if (model_type == 'OPENAI_MODEL') {
+		var text_out = await OpenAI_REST_API(model_type_KEY, prompt);
+		console.log("text_out: ", text_out);
+		
+		document.getElementById('response').innerHTML = text_out;
+	
 	} else if (model_type == 'GEMINI_MODEL') {
-    var text_out = await Gemini_REST_API(model_type_KEY, prompt);
-    console.log("text_out: ", text_out);
-    
-    document.getElementById('response').innerHTML = text_out;
-    
+		var text_out = await Gemini_REST_API(model_type_KEY, prompt);
+		console.log("text_out: ", text_out);
+
+		document.getElementById('response').innerHTML = text_out;
+	
 	} else {
-    document.getElementById('response').innerHTML = "No model was selected. Please select a model.";
-  }
-  
+		document.getElementById('response').innerHTML = "No model was selected. Please select a model.";
+	}
+
 }
 
 // -----------------------------------------------
 
 async function OpenAI_REST_API(OPENAI_API_KEY, prompt) {
-
-  var model_name = 'gpt-4'; // 'gpt-3.5-turbo'
-var system_content = "You are a helpful assistant"
+	
+	var model_name = 'gpt-4'; // 'gpt-3.5-turbo'
+	var system_content = "You are a helpful assistant"
         var assistant_content = "Respond concisely"
         var messages = [{"role": "system", "content": system_content}, {"role": "user", "content": prompt}, {"role": "assistant", "content": assistant_content}];
         var data = {"model": model_name, 'messages': messages, 'temperature': 0};
