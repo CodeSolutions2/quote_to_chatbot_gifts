@@ -551,7 +551,6 @@ async function automatic_checking_for_response_in_file(desired_filename) {
 
 async function GET_file_download_url(desired_filename) {
 
-	var desired_filename = 'output_response';
 	var desired_foldername = 'src';
   	var repoName = 'quote_to_chatbot_gifts';
 	var repoOwner = 'CodeSolutions2';
@@ -560,7 +559,7 @@ async function GET_file_download_url(desired_filename) {
 	
 	const file_download_url = objOut.file_download_url[0];
 	console.log('file_download_url: ', file_download_url);
-	// https://raw.githubusercontent.com/CodeSolutions2/quote_to_chatbot_gifts/main/src/output_response
+	// https://raw.githubusercontent.com/CodeSolutions2/quote_to_chatbot_gifts/main/src/$desired_filename
 	return file_download_url;
 }
 	
