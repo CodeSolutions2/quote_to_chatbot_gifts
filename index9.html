@@ -349,7 +349,7 @@ document.getElementById("run_yaml_process_file_onButton_click").addEventListener
 			}
 			desired_filename.push(chars_arr.at(ind));
 		}
-		desired_filename = desired_filename.join('')+'.txt';
+		desired_filename = desired_filename.join('')+'.cfg'; // .log, .conf, .cfg (configuration file)
 		console.log("desired_filename: ", desired_filename);
 		
 		await run_backend(model_type, model_type_KEY, text_quotes, Q_or_statement, desired_filename)
