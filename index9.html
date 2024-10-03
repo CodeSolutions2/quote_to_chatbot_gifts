@@ -8,7 +8,7 @@
 <div class="top_navbar">
 	
 <!-- This determines the number of bars are shown on the left, not sure what it's function is -->
-<div class="hamburger">
+<div id="main_page_title" class="hamburger">
 <div class="one"></div>
 <div class="two"></div>
 </div>
@@ -38,7 +38,7 @@
 
 <div class="main_container">
 
-<img id="main_page_image" style="display:block;" src="quote_to_chatbot_gifts.png" alt="Quote to Chatbot Gifts"/>
+<img id="main_page_image" src="quote_to_chatbot_gifts.png" alt="Quote to Chatbot Gifts"/>
 <p id="main_page_statement" style="display:block;">Welcome to this "Walk-up-app" where your data is used to make agents similar to the quotes/text content you enter.</p>
 
 <!-- ------------------------------------------------------------------------- -->
@@ -113,6 +113,8 @@ body{ background: #e1ecf2; }
 div#notification { position: relative; color: #3236a8; }
 div#error { position: relative; color: #bd1f17; }
 div#response { display:none; color: #000000; }
+
+img#main_page_image { display:block; margin: 0 auto; }
 
 table { width: 600px; }
 tr {vertical-align: top; border: 0px solid black; padding: 20px 10px; width: 100%; }
@@ -191,8 +193,34 @@ th, td {vertical-align: top; border: 0px solid black; padding: 20px 10px; width:
 window.addEventListener('beforeunload', async function() {
 	window.location.href = window.location.href + '?nocache=' + new Date().getTime();
 	document.getElementById("dropdown_options").selectedIndex = 0;
+
+	document.getElementById("chatbot_container").style.display = 'none';
+	document.getElementById("instructions_container").style.display = 'none';
 });
 
+// -----------------------------------------------
+
+document.getElementById("main_page_title").addEventListener("click", async () => {
+
+	document.getElementById("main_page_image").style.display = 'block';
+	document.getElementById("main_page_statement").style.display = 'block';
+	
+	document.getElementById("chatbot_container").style.display = 'none';
+	document.getElementById("chatbot_container_title_instruction").style.display = 'none';
+	document.getElementById("chatbot_container_text_input").style.display = 'none';
+	document.getElementById("run_yaml_process_file_onButton_click").style.display = 'none';
+	document.getElementById("chatbot_output").style.display = 'none';
+
+	document.getElementById("instructions_container").style.display = 'none';
+	document.getElementById("instructions_container_title_instruction").style.display = 'none';
+	document.getElementById("instructions_container_paragraph").style.display = 'none';
+	document.getElementById("enter_key").style.display = 'none';
+	document.getElementById("select_dropdown_option_label").style.display = 'none';
+	document.getElementById("dropdown_options").style.display = 'none';
+	document.getElementById("enter_quotes").style.display = 'none';
+	document.getElementById("input_text").style.display = 'none';
+});
+	
 // -----------------------------------------------
 
 document.getElementById("instructions_sidebar").addEventListener("click", async () => {
