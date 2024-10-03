@@ -38,13 +38,15 @@
 
 <div class="main_container">
 
+<img id="main_page_image" style="display:block;" src="quote_to_chatbot_gifts.png" alt="Quote to Chatbot Gifts"/>
+<p id="main_page_statement" style="display:block;">Welcome to this "Walk-up-app" where your data is used to make agents similar to the quotes/text content you enter.</p>
 
 <!-- ------------------------------------------------------------------------- -->
 <!-- Instruction section: this should only appear when "Instructions" is selected -->
 <div id="instructions_container" class="item" >
 <h2 id="instructions_container_title_instruction" style="display:none;">Instructions for how to use Quote-to-chatbot gifts</h2>
 
-<p id="instructions_container_paragraph" style="display:none;">Welcome to this "Walk-up-app" where your data is used to make agents similar to the quotes/text content you enter. Please complete the following information: [0] Enter your Google Gemini or OpenAI KEY, [1] Enter quotes/text content in the textarea that you wish to use to train the chatbot. For example, quotes of someone will train the chatbot to have the persona of someone who would say the quotes. [2] Click on the "Chatbot" sidebar and start talking with your "Quote programmed chatbot"!</p>
+<p id="instructions_container_paragraph" style="display:none;">Please complete the following information: [0] Enter your Google Gemini or OpenAI KEY, [1] Enter quotes/text content in the textarea that you wish to use to train the chatbot. For example, quotes of someone will train the chatbot to have the persona of someone who would say the quotes. [2] Click on the "Chatbot" sidebar and start talking with your "Quote programmed chatbot"!</p>
 
 <h3 id="enter_key" style="display:none">[0] Enter your Google Gemini or OpenAI KEY</h3>
 <label id="select_dropdown_option_label" style="display:none">Select a drop down option:</label>
@@ -194,6 +196,9 @@ window.addEventListener('beforeunload', async function() {
 // -----------------------------------------------
 
 document.getElementById("instructions_sidebar").addEventListener("click", async () => {
+
+	document.getElementById("main_page_image").style.display = 'none';
+	document.getElementById("main_page_statement").style.display = 'none';
 	
 	document.getElementById("chatbot_container").style.display = 'none';
 	document.getElementById("chatbot_container_title_instruction").style.display = 'none';
@@ -215,6 +220,9 @@ document.getElementById("instructions_sidebar").addEventListener("click", async 
 
 document.getElementById("chatbot_sidebar").addEventListener("click", async () => {
 
+	document.getElementById("main_page_image").style.display = 'none';
+	document.getElementById("main_page_statement").style.display = 'none';
+	
 	document.getElementById("chatbot_container").style.display = 'block';
 	document.getElementById("chatbot_container_title_instruction").style.display = 'block';
 	document.getElementById("chatbot_container_text_input").style.display = 'block';
