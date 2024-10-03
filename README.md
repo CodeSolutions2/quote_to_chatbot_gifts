@@ -27,5 +27,6 @@ This version works uses simple REST API commands to each model, no user data is 
 
 
 ## In progress
-- Quote/input text augmentation - understand how input text influences similarity of responses
-- Fine-tuning model
+- Measure/quanitfy similarity of original input text and chatbot generated text
+- Quote/input text augmentation - understand how input text quantify influences chatbot generated text
+- Custom fine-tuning model
