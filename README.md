@@ -26,7 +26,3 @@ This version works uses simple REST API commands to each model, no user data is 
 [Working version using several AI professional models] https://codesolutions2.github.io/quote_to_chatbot_gifts/index9.html#
 
 
-## In progress
-- Measure/quanitfy similarity of original input text and chatbot generated text
-- Quote/input text augmentation - understand how input text quantify influences chatbot generated text
-- Custom fine-tuning model
